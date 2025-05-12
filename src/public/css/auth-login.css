@@ -1,0 +1,100 @@
+body {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    background-image: url("../images/color.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+}
+
+.content {
+    display: block;
+    align-items: center;
+    height: 680px;
+    width: 656px;
+    margin: 5% auto;
+    border-radius: 24px;
+    padding: 10px;
+    gap: 30px;
+    background: #FFFFFF;
+}
+
+.login-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.login-title p {
+    font-family: Inter;
+    font-weight: 700;
+    font-size: 36px;
+    color: #333333;
+    width: 680px;
+    height: 57px;
+    text-align: center;
+}
+
+form {
+    width: 680px;
+    height: 435px;
+}
+
+.form-group {
+    width: 680px;
+    margin: 10px 0;
+}
+
+.form-group label {
+    color: #000000;
+    margin: 5px 0 10px 0;
+    font-family: Inter;
+    font-weight: 700;
+    font-size: 24px;
+}
+
+.form-group input {
+    width: 680px;
+    height: 57px;
+    margin-bottom: 20px;
+}
+
+.form-button {
+    width: 680px;
+    height: 57px;
+    text-align: center;
+}
+
+.btn-primary {
+    width: 680px;
+    height: 57px;
+    font-size: 26px;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 30px 0;
+    background: #FF5555;
+    color: #FFFFFF;
+    border: none;
+    cursor: pointer;
+}
+
+.create-account {
+    height: 24px;
+}
+
+.create-account a {
+    font-family: Inter;
+    font-weight: 400;
+    font-size: 20px;
+    text-align: center;
+    vertical-align: middle;
+    color: #0073CC;
+    text-decoration: none;
+}
+
+.text-danger {
+    color: #FF5555;
+}
