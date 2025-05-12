@@ -1,15 +1,21 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Attendance;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Attendance;
+use Illuminate\Routing\Controller;
 use Carbon\Carbon;
 
 class AttendanceController extends Controller
 {
-    public function create()
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    public function create(request $request)
     {
         $user = Auth::user();
         $attendance = Attendance::where('user_id', $user->id)
@@ -17,22 +23,26 @@ class AttendanceController extends Controller
             ->latest()
             ->first();
 
-        $status = '未出勤';
+        $status = 'none';
 
         if ($attendance) {
             if ($attendance->work_end) {
-                $status = '退勤済';
+                $status = 'finished'; // 退勤済
             } elseif ($attendance->rest_start && !$attendance->rest_end) {
-                $status = '休憩中';
+                $status = 'resting'; // 休憩中
             } elseif ($attendance->work_start) {
-                $status = '出勤中';
+                $status = 'working'; // 出勤中
             }
         }
 
+        // 曜日の取得方法を修正
+        $today = Carbon::today();
+        $weekday = $today->isoFormat('dddd'); // 例: '月曜日'
+
         return view('attendance.create', [
             'status' => $status,
-            'today' => Carbon::today()->format('Y年m月d日'),
-            'weekday' => Carbon::today()->formatLocalized('%A'),
+            'today' => $today->format('Y年m月d日'),
+            'weekday' => $weekday,  // 修正
             'time' => Carbon::now()->format('H:i:s'),
         ]);
     }

@@ -1,0 +1,29 @@
+body {
+    width: 100vw;
+    height: 100vh;
+}
+
+.header {
+    max-width: none;
+    height: 80px;
+    background-color: black;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    overflow: hidden;
+}
+
+.header_logo--icon img {
+    margin-left: 40px;
+}
+
+a {
+    width: 100px;
+    font-family: Inter;
+    font-weight: 400;
+    font-size: 24px;
+    text-align: center;
+    text-decoration: none;
+    color: #FFFFFF;
+    cursor: pointer;
+}
