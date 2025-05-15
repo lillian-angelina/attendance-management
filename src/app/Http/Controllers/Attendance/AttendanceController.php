@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Attendance;
 use Illuminate\Routing\Controller;
 use Carbon\Carbon;
-use App\Models\AttendanceBreak;
 
 class AttendanceController extends Controller
 {
@@ -66,16 +65,26 @@ class AttendanceController extends Controller
             ],
         ])->get($id);
 
-        if (!$attendance) {
-            abort(404, '勤怠データが見つかりません');
-        }
+        $attendance = Attendance::findOrFail($id);
 
-        return view('attendance.show', compact('attendance'));
+        // 日付に曜日を付加
+        $attendanceData = [
+            'id' => $attendance->id,
+            'date' => $attendance->date,
+            'day' => \Carbon\Carbon::parse($attendance->date)->isoFormat('ddd'),
+            'start_time' => $attendance->start_time,
+            'end_time' => $attendance->end_time,
+            'break_time' => $attendance->break_time,
+            'note' => $attendance->note,
+        ];
+
+        return view('attendance.show', ['attendance' => $attendanceData]);
     }
 
-    public function create(request $request)
+    public function create(Request $request)
     {
         $user = Auth::user();
+
         $attendance = Attendance::where('user_id', $user->id)
             ->whereDate('work_start', Carbon::today())
             ->latest()
@@ -83,29 +92,30 @@ class AttendanceController extends Controller
 
         $status = 'none';
 
-        // 最新の休憩ログを取得
-        $lastRest = $attendance->attendanceBreaks()->latest()->first();
+        $lastRest = null;
+        if ($attendance) {
+            $lastRest = $attendance->attendanceBreaks()->latest()->first();
+        }
 
-        if ($attendance->work_end) {
+        if ($attendance && $attendance->work_end) {
             $status = 'finished';
         } elseif ($lastRest && is_null($lastRest->rest_end)) {
             $status = 'resting';
-        } elseif ($attendance->work_start) {
+        } elseif ($attendance && $attendance->work_start) {
             $status = 'working';
         }
 
-        // 曜日の取得方法を修正
         $today = Carbon::today();
-        $weekday = $today->isoFormat('dddd'); // 例: '月曜日'
+        $weekday = $today->isoFormat('dddd');
 
         return view('attendance.create', [
             'status' => $status,
             'today' => $today->format('Y年m月d日'),
-            'weekday' => $weekday,  // 修正
+            'weekday' => $weekday,
             'time' => Carbon::now()->format('H:i:s'),
         ]);
     }
-
+    
     public function startWork()
     {
         Attendance::create([
@@ -170,4 +180,5 @@ class AttendanceController extends Controller
 
         return redirect()->back();
     }
+
 }

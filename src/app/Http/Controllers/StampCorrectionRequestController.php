@@ -1,14 +1,18 @@
 <?php
 
+// StampCorrectionRequestController.php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Attendance;
+use App\Models\AttendanceRequest;
 
 class StampCorrectionRequestController extends Controller
 {
     public function index()
     {
-        // 仮の申請データ（通常はDBから取得）
+        // 仮の申請データ（実際はDBから取得する）
         $requests = [
             [
                 'id' => 1,
@@ -29,5 +33,27 @@ class StampCorrectionRequestController extends Controller
         ];
 
         return view('stamp_correction_request.index', compact('requests'));
+    }
+
+    // ★ 申請保存処理を追加
+    public function store(Request $request, $id)
+    {
+        $request->validate([
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+            'break_time' => 'required|string|max:10',
+            'note' => 'nullable|string|max:255',
+        ]);
+
+        AttendanceRequest::create([
+            'attendance_id' => $id,
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,
+            'break_time' => $request->break_time,
+            'note' => $request->note,
+            'status' => 'pending',
+        ]);
+
+        return redirect()->back()->with('success', '修正申請を送信しました。');
     }
 }

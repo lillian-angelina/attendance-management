@@ -41,3 +41,5 @@ Route::get('/attendance/list', [AttendanceController::class, 'index'])->name('at
 Route::get('/attendance/{id}', [AttendanceController::class, 'show'])->name('attendance.show');
 
 Route::get('/stamp_correction_request/list', [StampCorrectionRequestController::class, 'index']);
+Route::post('/attendance/{id}/request', [StampCorrectionRequestController::class, 'store'])->name('attendance.request');
+Route::get('/admin/stamp_correction_requests', [StampCorrectionRequestController::class, 'index']);
