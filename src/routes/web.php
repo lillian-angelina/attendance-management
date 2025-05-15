@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\VerificationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Attendance\AttendanceController;
+use App\Http\Controllers\StampCorrectionRequestController;
 
 // ログイン
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -35,3 +36,8 @@ Route::middleware(['auth'])->group(function () {
     // 休憩戻ボタンのルート
     Route::post('/attendance/rest-end', [AttendanceController::class, 'endRest'])->name('attendance.restEnd');
 });
+
+Route::get('/attendance/list', [AttendanceController::class, 'index'])->name('attendance.index');
+Route::get('/attendance/{id}', [AttendanceController::class, 'show'])->name('attendance.show');
+
+Route::get('/stamp_correction_request/list', [StampCorrectionRequestController::class, 'index']);

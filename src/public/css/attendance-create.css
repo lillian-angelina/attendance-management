@@ -67,6 +67,11 @@ body {
     gap: 100px;
 }
 
+.form-clockin,
+.form-restend {
+    margin: 50px 0;
+}
+
 .attendance__message {
     font-family: Inter;
     font-weight: 700;
