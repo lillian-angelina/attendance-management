@@ -17,6 +17,8 @@ return new class extends Migration {
             $table->dateTime('rest_start')->nullable();     // 休憩開始時間
             $table->dateTime('rest_end')->nullable();       // 休憩終了時間
             $table->dateTime('work_end')->nullable();       // 退勤時間
+            $table->string('note')->nullable();             // メモ
+            $table->boolean('is_edited')->default(false);   // 編集フラグ
             $table->timestamps();                           // created_at, updated_at
         });
     }

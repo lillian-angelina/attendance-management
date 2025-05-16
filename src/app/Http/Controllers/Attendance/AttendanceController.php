@@ -28,7 +28,7 @@ class AttendanceController extends Controller
                 'total_time' => '08:00',
             ],
             [
-                'id' => 2,
+                'id' => 1,
                 'date' => '2025-05-02',
                 'day' => '金',
                 'start_time' => '09:15',
@@ -43,42 +43,8 @@ class AttendanceController extends Controller
 
     public function show($id)
     {
-        // 仮データ（通常はDBから取得）
-        $attendance = collect([
-            1 => [
-                'date' => '2025-05-01',
-                'day' => '木',
-                'start_time' => '09:00',
-                'end_time' => '18:00',
-                'break_time' => '01:00',
-                'total_time' => '08:00',
-                'note' => '通常勤務',
-            ],
-            2 => [
-                'date' => '2025-05-02',
-                'day' => '金',
-                'start_time' => '09:15',
-                'end_time' => '18:10',
-                'break_time' => '01:00',
-                'total_time' => '07:55',
-                'note' => '朝礼により出勤が遅れた',
-            ],
-        ])->get($id);
-
         $attendance = Attendance::findOrFail($id);
-
-        // 日付に曜日を付加
-        $attendanceData = [
-            'id' => $attendance->id,
-            'date' => $attendance->date,
-            'day' => \Carbon\Carbon::parse($attendance->date)->isoFormat('ddd'),
-            'start_time' => $attendance->start_time,
-            'end_time' => $attendance->end_time,
-            'break_time' => $attendance->break_time,
-            'note' => $attendance->note,
-        ];
-
-        return view('attendance.show', ['attendance' => $attendanceData]);
+        return view('attendance.show', compact('attendance'));
     }
 
     public function create(Request $request)
@@ -115,7 +81,7 @@ class AttendanceController extends Controller
             'time' => Carbon::now()->format('H:i:s'),
         ]);
     }
-    
+
     public function startWork()
     {
         Attendance::create([

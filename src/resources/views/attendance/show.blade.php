@@ -11,50 +11,17 @@
 @section('content')
     <div class="attendance-detail">
         <h2>勤怠詳細</h2>
+        <p>日付：{{ \Carbon\Carbon::parse($attendance->work_start)->format('Y/m/d') }}
+            ({{ \Carbon\Carbon::parse($attendance->work_start)->isoFormat('dddd') }})</p>
+        <p>出勤時間：{{ \Carbon\Carbon::parse($attendance->work_start)->format('H:i') }}</p>
+        <p>退勤時間：{{ \Carbon\Carbon::parse($attendance->work_end)->format('H:i') }}</p>
+        <p>休憩時間：{{ $attendance->break_time ?? '01:00' }}</p>
+        <p>備考：{{ $attendance['note'] }}</p>
 
-        <form action="{{ route('attendance.request', ['id' => $attendance['id']]) }}" method="POST" class="attendance-form">
-            @csrf
-            <table border="1" cellspacing="0" cellpadding="8" style="margin-top: 20px;">
-                <tr>
-                    <th>日付</th>
-                    <td>{{ \Carbon\Carbon::parse($attendance['date'])->format('Y年m月d日') }}（{{ $attendance['day'] }}）</td>
-                </tr>
-                <tr>
-                    <th>出勤時間</th>
-                    <td>
-                        <input type="time" name="start_time"
-                            value="{{ old('start_time', \Carbon\Carbon::parse($attendance['start_time'])->format('H:i')) }}">
-                    </td>
-                </tr>
-                <tr>
-                    <th>退勤時間</th>
-                    <td>
-                        <input type="time" name="end_time"
-                            value="{{ old('end_time', \Carbon\Carbon::parse($attendance['end_time'])->format('H:i')) }}">
-                    </td>
-                </tr>
-                <tr>
-                    <th>休憩時間</th>
-                    <td>
-                        <input type="text" name="break_time" placeholder="例: 01:00"
-                            value="{{ old('break_time', $attendance['break_time']) }}">
-                    </td>
-                </tr>
-                <tr>
-                    <th>備考</th>
-                    <td>
-                        <textarea name="note" rows="3" cols="40">{{ old('note', $attendance['note']) }}</textarea>
-                    </td>
-                </tr>
-            </table>
-
-            <div style="margin-top: 20px;">
-                <button type="submit">修正申請する</button>
-            </div>
-        </form>
-
-        <div style="margin-top: 20px;">
-            <a href="{{ url('/attendance/list') }}">← 勤怠一覧へ戻る</a>
-        </div>
+        @if (!$attendance['is_edited'])
+            <a href="{{ url('/attendance/' . $attendance['id'] . '/edit') }}" class="btn btn-primary">修正</a>
+        @else
+            <p style="color: red;">※承認待ちのため修正はできません</p>
+        @endif
     </div>
 @endsection
