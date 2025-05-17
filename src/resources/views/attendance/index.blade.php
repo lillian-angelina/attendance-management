@@ -13,7 +13,7 @@
         <h2>勤怠一覧</h2>
         <div class="navigation">
             <a href="#">←前月</a>
-            <span style="margin: 0 1em;"><img src="{{ asset('images/karenda-.png') }}"> 2025/05</span>
+            <span style="margin: 0 1em;"><img src="{{ asset('images/calendar-icon.png') }}"> 2025/05</span>
             <a href="#">翌月→</a>
         </div>
 

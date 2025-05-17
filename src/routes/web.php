@@ -6,6 +6,8 @@ use App\Http\Controllers\Auth\VerificationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Attendance\AttendanceController;
 use App\Http\Controllers\StampCorrectionRequestController;
+use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Admin\AdminStaffController;
 
 // ログイン
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -37,9 +39,24 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/attendance/rest-end', [AttendanceController::class, 'endRest'])->name('attendance.restEnd');
 });
 
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('login.form');
+    Route::post('/login', [AdminAuthController::class, 'login'])->name('login');
+    Route::post('/logout', [AdminAuthController::class, 'logout'])->name('logout');
+    Route::get('/attendance/list', [AdminAuthController::class, 'index'])->name('attendance.list');
+    Route::get('/staff/list', [AdminStaffController::class, 'index'])->name('admin.staff.list');
+    Route::get('/staff/{staff}/attendance', [AdminStaffController::class, 'attendance'])->name('staff.attendance');
+});
+
 Route::get('/attendance/list', [AttendanceController::class, 'index'])->name('attendance.index');
 Route::get('/attendance/{id}', [AttendanceController::class, 'show'])->name('attendance.show');
 
 Route::get('/stamp_correction_request/list', [StampCorrectionRequestController::class, 'index']);
 Route::post('/attendance/{id}/request', [StampCorrectionRequestController::class, 'store'])->name('attendance.request');
 Route::get('/admin/stamp_correction_requests', [StampCorrectionRequestController::class, 'index']);
+Route::post('/stamp_correction_request/approve/{attendance_correct_request}', [StampCorrectionRequestController::class, 'approve'])->name('admin.stamp_correction_request.approve');
+
+// 修正申請詳細（承認画面）
+Route::get('/stamp_correction_request/approve/{attendance_correction_request}', [StampCorrectionRequestController::class, 'showApprove'])
+    ->middleware('auth:admin') // 管理者ログイン時のみアクセス可能にする
+    ->name('admin.stamp_correction_request.approve');

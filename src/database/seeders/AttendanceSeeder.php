@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Attendance;
+use App\Models\Staff;
 
 class AttendanceSeeder extends Seeder
 {
@@ -13,6 +14,11 @@ class AttendanceSeeder extends Seeder
      */
     public function run(): void
     {
+        $staff = Staff::factory()->create();
+        Attendance::factory()->count(10)->create([
+            'user_id' => $staff->id,
+        ]);
+
         Attendance::create([
             'user_id' => 1,
             'work_start' => '2025-05-01 09:00:00',

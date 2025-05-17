@@ -48,18 +48,12 @@
                         </li>
                     @endif
 
-                    @auth
                         <li class="header_nav--logout">
                             <form class="form" method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit" class="header_form--logout">ログアウト</button>
                             </form>
                         </li>
-                    @else
-                        <li class="header_nav--login">
-                            <a href="{{ route('login') }}" class="header_form--login">ログイン</a>
-                        </li>
-                    @endauth
                 </ul>
             </nav>
         @endif
