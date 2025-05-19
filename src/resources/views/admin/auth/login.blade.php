@@ -19,7 +19,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('admin.login') }}" class="admin-login__form">
+    <form method="POST" action="{{ route('admin.auth.login') }}" class="admin-login__form">
         @csrf
 
         <div class="admin-login__field">

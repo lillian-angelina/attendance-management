@@ -22,12 +22,12 @@
             </tr>
         </thead>
         <tbody>
-            @forelse($staffs as $staff)
+            @forelse($users as $user)
                 <tr>
-                    <td>{{ $staff->name }}</td>
-                    <td>{{ $staff->email }}</td>
+                    <td>{{ $user->name }}</td>
+                    <td>{{ $user->email }}</td>
                     <td>
-                        <a href="{{ route('admin.staff.attendance', ['staff' => $staff->id]) }}" class="staff__detail-link">詳細</a>
+                        <a href="{{ route('admin.staff.list', ['user' => $user->id]) }}" class="staff__detail-link">詳細</a>
                     </td>
                 </tr>
             @empty

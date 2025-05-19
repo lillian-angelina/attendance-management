@@ -16,7 +16,7 @@ class AdminAuthController extends Controller
             ? Carbon::parse($request->input('date'))
             : Carbon::today();
 
-        $attendances = Attendance::with('staff')
+        $attendances = Attendance::with('user')
             ->whereDate('work_date', $date)
             ->get();
 

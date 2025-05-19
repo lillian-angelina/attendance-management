@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\Attendance;
-use App\Models\Staff;
+use App\Models\User;
 
 class AttendanceSeeder extends Seeder
 {
@@ -14,11 +14,15 @@ class AttendanceSeeder extends Seeder
      */
     public function run(): void
     {
-        $staff = Staff::factory()->create();
-        Attendance::factory()->count(10)->create([
-            'user_id' => $staff->id,
-        ]);
+        $users = User::factory()->count(20)->create();
 
+        foreach ($users as $user) {
+            Attendance::factory()->count(20)->create([
+                'user_id' => $user->id,
+            ]);
+        }
+
+        // テスト用固定データ
         Attendance::create([
             'user_id' => 1,
             'work_start' => '2025-05-01 09:00:00',

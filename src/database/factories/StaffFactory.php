@@ -12,11 +12,13 @@ class StaffFactory extends Factory
 
     public function definition()
     {
+        $faker = \Faker\Factory::create('ja_JP');
+
         return [
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
             'password' => bcrypt('password123'),
-            'remember_token' => Str::random(10),
+            'remember_token' => Str::random(20),
         ];
     }
 }

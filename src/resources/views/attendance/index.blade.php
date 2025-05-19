@@ -11,10 +11,19 @@
 @section('content')
     <div class="attendance-list">
         <h2>勤怠一覧</h2>
-        <div class="navigation">
-            <a href="#">←前月</a>
-            <span style="margin: 0 1em;"><img src="{{ asset('images/calendar-icon.png') }}"> 2025/05</span>
-            <a href="#">翌月→</a>
+
+        {{-- 月切り替えナビゲーション --}}
+        <div class="attendance-list__nav">
+            <a href="{{ route('attendance.index', ['user' => $user->id, 'month' => $prevMonth->format('Y-m')]) }}"
+                class="attendance-list__nav-link">←前月</a>
+
+            <div class="attendance-list__month">
+                <i class="fas fa-calendar-alt"><img src="{{ asset('images/calendar-icon.png') }}"></i>
+                {{ $currentMonth->format('Y年m月') }}
+            </div>
+
+            <a href="{{ route('attendance.index', ['user' => $user->id, 'month' => $nextMonth->format('Y-m')]) }}"
+                class="attendance-list__nav-link">翌月→</a>
         </div>
 
         <table border="1" cellspacing="0" cellpadding="8" style="width:100%; margin-top: 20px;">
@@ -31,7 +40,7 @@
             <tbody>
                 @foreach($attendances as $attendance)
                     <tr>
-                        <td>{{ \Carbon\Carbon::parse($attendance['date'])->format('m/d') }} ({{ $attendance['day'] }})</td>
+                        <td>{{ \Carbon\Carbon::parse($attendance['work_date'])->format('m/d') }} ({{ $attendance['day'] }})</td>
                         <td>{{ $attendance['start_time'] }}</td>
                         <td>{{ $attendance['end_time'] }}</td>
                         <td>{{ $attendance['break_time'] }}</td>

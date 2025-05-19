@@ -39,14 +39,13 @@
             <tbody>
                 @forelse($attendances as $attendance)
                     <tr>
-                        <td>{{ $attendance->staff->name }}</td>
+                        <td>{{ $attendance->user->name }}</td>
                         <td>{{ $attendance->clock_in_time ? $attendance->clock_in_time->format('H:i') : '—' }}</td>
                         <td>{{ $attendance->clock_out_time ? $attendance->clock_out_time->format('H:i') : '—' }}</td>
                         <td>{{ $attendance->break_duration ?? '—' }}</td>
                         <td>{{ $attendance->total_work_time ?? '—' }}</td>
                         <td>
-                            <a href="{{ route('admin.attendance.detail', $attendance->id) }}"
-                                class="attendance__detail-link">詳細</a>
+                            <a href="{{ url('/attendance/' . $attendance['id']) }}" class="attendance__detail-link">詳細</a>
                         </td>
                     </tr>
                 @empty
