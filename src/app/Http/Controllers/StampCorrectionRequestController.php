@@ -46,8 +46,8 @@ class StampCorrectionRequestController extends Controller
         $correctionRequest = AttendanceCorrectionRequest::create([
             'user_id' => Auth::id(),
             'date' => $request->input('date'),
-            'start_time' => $request->input('start_time'),
-            'end_time' => $request->input('end_time'),
+            'work_start' => $request->input('work_start'),
+            'work_end' => $request->input('work_end'),
             'note' => $request->input('note'),
             'status' => 'pending',
             'requested_at' => Carbon::now(),

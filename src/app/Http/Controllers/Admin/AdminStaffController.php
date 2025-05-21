@@ -15,29 +15,26 @@ class AdminStaffController extends Controller
     public function index()
     {
         $users = User::all(); // 一般ユーザーをすべて取得
-
         return view('admin.staff.index', compact('users'));
     }
 
-    public function attendance($id, Request $request)
+    public function attendance(User $staff, Request $request)
     {
-        $admin = User::findOrFail($id);
+        $month = $request->input('month', Carbon::now()->format('Y-m'));
+        $startOfMonth = Carbon::parse($month)->startOfMonth();
+        $endOfMonth = Carbon::parse($month)->endOfMonth();
 
-        $month = $request->input('month') ? Carbon::parse($request->input('month')) : Carbon::now();
-        $startOfMonth = $month->copy()->startOfMonth();
-        $endOfMonth = $month->copy()->endOfMonth();
-
-        $attendances = Attendance::where('user_id', $id)
+        $attendances = $staff->attendances()
             ->whereBetween('work_date', [$startOfMonth, $endOfMonth])
             ->orderBy('work_date')
             ->get();
 
         return view('admin.attendance.staff', [
-            'admin' => $admin = Auth::guard('admin')->user(),
+            'staff' => $staff,
             'attendances' => $attendances,
-            'currentMonth' => $month,
-            'prevMonth' => $month->copy()->subMonth(),
-            'nextMonth' => $month->copy()->addMonth(),
+            'currentMonth' => $startOfMonth,
+            'prevMonth' => $startOfMonth->copy()->subMonth(),
+            'nextMonth' => $startOfMonth->copy()->addMonth(),
         ]);
     }
 }

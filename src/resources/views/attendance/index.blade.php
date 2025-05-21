@@ -41,8 +41,8 @@
                 @foreach($attendances as $attendance)
                     <tr>
                         <td>{{ \Carbon\Carbon::parse($attendance['work_date'])->format('m/d') }} ({{ $attendance['day'] }})</td>
-                        <td>{{ $attendance['start_time'] }}</td>
-                        <td>{{ $attendance['end_time'] }}</td>
+                        <td>{{ $attendance['work_start'] }}</td>
+                        <td>{{ $attendance['work_end'] }}</td>
                         <td>{{ $attendance['break_time'] }}</td>
                         <td>{{ $attendance['total_time'] }}</td>
                         <td><a href="{{ url('/attendance/' . $attendance['id']) }}">詳細</a></td>

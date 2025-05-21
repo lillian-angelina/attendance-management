@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\VerificationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Attendance\AttendanceController;
 use App\Http\Controllers\StampCorrectionRequestController;
+use App\Http\Controllers\Admin\AdminStampCorrectionRequestController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Admin\AdminStaffController;
 
@@ -29,7 +30,6 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/attendance/rest/end', [AttendanceController::class, 'endRest'])->name('attendance.rest.end');
     Route::post('/attendance/end', [AttendanceController::class, 'endWork'])->name('attendance.end');
     Route::get('/attendance/list', [AttendanceController::class, 'index'])->name('attendance.index');
-    Route::get('/attendance/{id}', [AttendanceController::class, 'show'])->name('attendance.show');
     Route::put('/attendance/{attendance}', [AttendanceController::class, 'update'])->name('attendance.update');
 
     // 出勤ボタンのルート
@@ -42,6 +42,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/attendance/rest-end', [AttendanceController::class, 'endRest'])->name('attendance.restEnd');
 });
 
+Route::get('/attendance/{id}', [AttendanceController::class, 'show'])->name('attendance.show');
+
 Route::prefix('admin')->name('admin.')->group(function () {
     // 管理者認証ルート
     Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('auth.login.form');
@@ -51,16 +53,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // 認証済み管理者のみアクセス可能
     Route::middleware(['auth:admin'])->group(function () {
         Route::get('/attendance/list', [AdminAuthController::class, 'index'])->name('attendance.list');
-        Route::get('/staff', [AdminStaffController::class, 'index'])->name('staff.list');
+        Route::get('/staff/list', [AdminStaffController::class, 'index'])->name('staff.list');
         Route::get('/attendance/staff/{staff}', [AdminStaffController::class, 'attendance'])->name('attendance.staff');
     });
 });
 
 Route::get('/stamp_correction_request/list', [StampCorrectionRequestController::class, 'index']);
 Route::post('/attendance/{id}/request', [StampCorrectionRequestController::class, 'store'])->name('attendance.request');
-Route::post('/stamp_correction_request/approve/{attendance_correct_request}', [StampCorrectionRequestController::class, 'approve'])->name('admin.stamp_correction_request.approve');
+Route::post('/stamp_correction_request/approve/{attendance_correct_request}', [AdminStampCorrectionRequestController::class, 'approve'])->name('admin.stamp_correction_request.approve');
 
 // 修正申請詳細（承認画面）
-Route::get('/stamp_correction_request/approve/{attendance_correction_request}', [StampCorrectionRequestController::class, 'showApprove'])
+Route::get('/stamp_correction_request/approve/{attendance_correction_request}', [AdminStampCorrectionRequestController::class, 'showApprove'])
     ->middleware('auth:admin') // 管理者ログイン時のみアクセス可能にする
     ->name('admin.stamp_correction_request.approve');

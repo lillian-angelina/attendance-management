@@ -25,27 +25,21 @@ class AttendanceController extends Controller
         $prevMonth = $currentMonth->copy()->subMonth();
         $nextMonth = $currentMonth->copy()->addMonth();
 
-        // 仮の勤怠データ（本来はDBから取得）
-        $attendances = [
-            [
-                'id' => 1,
-                'work_date' => '2025-05-01',
-                'day' => '木',
-                'start_time' => '09:00',
-                'end_time' => '18:00',
-                'break_time' => '01:00',
-                'total_time' => '08:00',
-            ],
-            [
-                'id' => 1,
-                'work_date' => '2025-05-02',
-                'day' => '金',
-                'start_time' => '09:15',
-                'end_time' => '18:10',
-                'break_time' => '01:00',
-                'total_time' => '07:55',
-            ],
-        ];
+        $attendances = Attendance::where('user_id', $user->id)
+            ->whereMonth('work_date', $currentMonth->month)
+            ->whereYear('work_date', $currentMonth->year)
+            ->get()
+            ->map(function ($attendance) {
+                return [
+                    'id' => $attendance->id,
+                    'work_date' => $attendance->work_date,
+                    'day' => Carbon::parse($attendance->work_date)->isoFormat('dd'),
+                    'work_start' => $attendance->work_start,
+                    'work_end' => $attendance->work_end,
+                    'break_time' => $attendance->break_time,
+                    'total_time' => $attendance->total_time,
+                ];
+            });
 
         return view('attendance.index', compact(
             'user',
@@ -55,6 +49,7 @@ class AttendanceController extends Controller
             'nextMonth'
         ));
     }
+
 
 
     public function show($id)
