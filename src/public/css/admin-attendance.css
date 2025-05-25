@@ -1,0 +1,103 @@
+body {
+    background: #F0EFF2;
+}
+
+.attendance {
+    max-width: none;
+    height: auto;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    margin: 30px auto;
+}
+
+.line {
+    width: 40px;
+    border: 1px solid #000000;
+    background: #000000;
+    margin: 0 20px 0 0;
+}
+
+.attendance__navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #FFFFFF;
+    background: #FFFFFF;
+    width: 900px;
+    height: 60px;
+    border-radius: 10px;
+    margin: 20px 0;
+}
+
+.calendar-icon {
+    width: 25px;
+    height: 25px;
+    margin: 0 10px;
+}
+
+.icon {
+    width: 20px;
+    height: 15px;
+    margin: 0 10px 0 20px;
+    color: #737373;
+}
+
+.attendance__nav--prev,
+.attendance__nav--next {
+    font-family: Inter;
+    font-weight: 700;
+    font-size: 16px;
+    color: #737373;
+}
+
+.attendance__nav--current {
+    font-family: Inter;
+    font-weight: 700;
+    font-size: 20px;
+    color: #000000;
+}
+
+.attendance__table {
+    width: 900px;
+    height: 31px;
+    border: 1px solid #E1E1E1;
+    border: none;
+    border-radius: 10px;
+    background: #FFFFFF;
+    margin-top: 20px;
+}
+
+.attendance__table-header {
+    width: 900px;
+    height: 40px;
+    color: #737373;
+}
+
+th {
+    font-family: Inter;
+    font-weight: 700;
+    font-size: 16px;
+    text-align: center;
+}
+
+.attendance__table-row {
+    width: 900px;
+    height: 33px;
+    margin: 5px 0;
+    border: 2px solid #E1E1E1;
+    color: #737373;
+}
+
+td {
+    text-align: center;
+    width: 900px;
+    height: 33px;
+}
+
+.attendance__detail-link {
+    font-family: Inter;
+    font-weight: 700;
+    font-size: 16px;
+    color: #000000;
+}
