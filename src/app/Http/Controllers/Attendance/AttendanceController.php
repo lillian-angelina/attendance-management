@@ -45,7 +45,7 @@ class AttendanceController extends Controller
                 }, 0);
 
                 // 勤務時間（分）
-                $totalTime = ($start && $end) ? $end->diffInMinutes($start) - $totalBreak : null;
+                $totalTime = ($start && $end) ? $start->diffInMinutes($end) - $totalBreak : null;
 
                 return [
                     'id' => $attendance->id,

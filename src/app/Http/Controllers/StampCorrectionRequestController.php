@@ -37,7 +37,9 @@ class StampCorrectionRequestController extends Controller
             ],
         ];
 
-        return view('stamp_correction_request.index', compact('requests'));
+        $layout = auth('admin')->check() ? 'layouts.admin' : 'layouts.app';
+
+        return view('stamp_correction_request.index', compact('requests', 'layout'));
     }
 
     // ★ 申請保存処理を追加

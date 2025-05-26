@@ -1,5 +1,9 @@
 {{-- resources/views/stamp_correction_request/index.blade.php --}}
-@extends('layouts.app')
+@php
+    $layoutView = $layout === 'layouts.admin' ? 'layouts.admin' : 'layouts.app';
+@endphp
+
+@extends($layoutView)
 
 @section('title')
     <title>申請一覧</title>

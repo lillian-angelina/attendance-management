@@ -15,7 +15,7 @@
     @yield('css')
     <header class="header">
         <div class="header_logo">
-            <a href="{{ url('/') }}" class="header_logo--icon">
+            <a href="{{ url('/admin/login') }}" class="header_logo--icon">
                 <img src="{{ asset('images/logo.svg') }}" alt="Logo">
             </a>
         </div>

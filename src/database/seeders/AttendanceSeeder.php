@@ -7,27 +7,31 @@ use App\Models\Attendance;
 use App\Models\AttendanceBreak;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Support\Str;
 
 class AttendanceSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // 日本人ユーザーを20人作成
-        $users = User::factory()->count(20)->create([
-            'name' => fn() => fake('ja_JP')->name(),
-            'email' => fn() => fake('ja_JP')->unique()->safeEmail(),
-        ]);
+        // 日本人ユーザー20人作成
+        $users = collect();
+        for ($i = 0; $i < 20; $i++) {
+            $users->push(User::factory()->create([
+                'name' => fake('ja_JP')->name(),
+                'email' => fake('ja_JP')->unique()->safeEmail(),
+            ]));
+        }
 
         foreach ($users as $user) {
-            for ($i = 0; $i < 15; $i++) {
-                // 1ヶ月分くらいの平日だけ
-                $date = Carbon::now()->startOfMonth()->addDays($i);
+            $daysAdded = 0;
+            $date = Carbon::now()->startOfMonth();
 
-                // 出勤: 9:00、退勤: 18:00、休憩: 12:00〜13:00（固定）
+            while ($daysAdded < 15) {
+                // 土日スキップ
+                if ($date->isWeekend()) {
+                    $date->addDay();
+                    continue;
+                }
+
                 $workStart = $date->copy()->setTime(9, 0);
                 $workEnd = $date->copy()->setTime(18, 0);
                 $breakStart = $date->copy()->setTime(12, 0);
@@ -52,6 +56,9 @@ class AttendanceSeeder extends Seeder
                     'created_at' => $date,
                     'updated_at' => $date,
                 ]);
+
+                $date->addDay();
+                $daysAdded++;
             }
         }
     }

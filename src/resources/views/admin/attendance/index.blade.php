@@ -26,46 +26,46 @@
         </div>
 
         <table class="attendance__table">
-                <thead>
-                    <tr class="attendance__table-header">
-                        <th>名前</th>
-                        <th>出勤</th>
-                        <th>退勤</th>
-                        <th>休憩</th>
-                        <th>合計</th>
-                        <th>詳細</th>
+            <thead>
+                <tr class="attendance__table-header">
+                    <th>名前</th>
+                    <th>出勤</th>
+                    <th>退勤</th>
+                    <th>休憩</th>
+                    <th>合計</th>
+                    <th>詳細</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($attendances as $attendance)
+                    <tr class="attendance__table-row">
+                        <td>{{ $attendance->user->name }}</td>
+                        <td>{{ $attendance->work_start ? \Carbon\Carbon::parse($attendance->work_start)->format('H:i') : '—' }}
+                        </td>
+                        <td>{{ $attendance->work_end ? \Carbon\Carbon::parse($attendance->work_end)->format('H:i') : '—' }}
+                        </td>
+                        <td>{{ $attendance->break_time ? \Carbon\Carbon::parse($attendance->break_time)->format('H:i') : '—' }}
+                        </td>
+                        @php
+                            $start = $attendance->work_start ? \Carbon\Carbon::parse($attendance->work_start) : null;
+                            $end = $attendance->work_end ? \Carbon\Carbon::parse($attendance->work_end) : null;
+                            $totalBreak = $attendance->break_time ? \Carbon\Carbon::parse($attendance->break_time)->diffInMinutes(Carbon\Carbon::createFromTime(0, 0)) : 0;
+
+                            $totalTime = ($start && $end) ? $end->diffInMinutes($start) - $totalBreak : null;
+                        @endphp
+
+                        <td>{{ $totalTime !== null ? gmdate('H:i', $totalTime * 60) : '—' }}</td>
+                        <td>
+                            <a href="{{ route('admin.attendance.staff', ['staff' => $attendance->user_id]) }}"
+                                class="attendance__detail-link">詳細</a>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @forelse($attendances as $attendance)
-                        <tr class="attendance__table-row">
-                            <td>{{ $attendance->user->name }}</td>
-                            <td>{{ $attendance->work_start ? \Carbon\Carbon::parse($attendance->work_start)->format('H:i') : '—' }}
-                            </td>
-                            <td>{{ $attendance->work_end ? \Carbon\Carbon::parse($attendance->work_end)->format('H:i') : '—' }}
-                            </td>
-                            <td>{{ $attendance->break_time ? \Carbon\Carbon::parse($attendance->break_time)->format('H:i') : '—' }}
-                            </td>
-                            @php
-                                $start = $attendance->work_start ? \Carbon\Carbon::parse($attendance->work_start) : null;
-                                $end = $attendance->work_end ? \Carbon\Carbon::parse($attendance->work_end) : null;
-                                $break = $attendance->break_time ? \Carbon\Carbon::parse($attendance->break_time)->diffInMinutes(Carbon\Carbon::createFromTime(0, 0)) : 0;
-
-                                $total = ($start && $end) ? $end->diffInMinutes($start) - $break : null;
-                            @endphp
-
-                            <td>{{ $total !== null ? gmdate('H:i', $total * 60) : '—' }}</td>
-                            <td>
-                                <a href="{{ route('admin.attendance.staff', ['staff' => $attendance->user_id]) }}"
-                                    class="attendance__detail-link">詳細</a>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6">データがありません</td>
-                        </tr>
-                    @endforelse
-                </tbody>
+                @empty
+                    <tr>
+                        <td colspan="6">データがありません</td>
+                    </tr>
+                @endforelse
+            </tbody>
         </table>
     </div>
 @endsection
