@@ -8,15 +8,21 @@ use App\Models\Attendance;
 use Illuminate\Routing\Controller;
 use App\Models\User;
 use Carbon\Carbon;
+use App\Services\AttendanceService;
 
 class AttendanceController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware(function ($request, $next) {
+            if (!Auth::check() && !Auth::guard('admin')->check()) {
+                return redirect()->route('login'); // またはadmin用login
+            }
+            return $next($request);
+        });
     }
 
-    public function index(Request $request)
+    public function index(Request $request, AttendanceService $attendanceService)
     {
         $user = Auth::user();
 
@@ -25,32 +31,30 @@ class AttendanceController extends Controller
         $prevMonth = $currentMonth->copy()->subMonth();
         $nextMonth = $currentMonth->copy()->addMonth();
 
-        $attendances = Attendance::with('attendanceBreaks')
+        $date = $request->input('date')
+            ? Carbon::parse($request->input('date'))
+            : Carbon::today();
+
+        $attendances = Attendance::with(['user', 'attendanceBreaks'])
+            ->whereDate('work_start', $date)
+            ->get();
+
+        $attendances = Attendance::with('breaks')
             ->where('user_id', $user->id)
             ->whereMonth('work_start', $currentMonth->month)
             ->whereYear('work_start', $currentMonth->year)
             ->get()
-            ->map(function ($attendance) {
+            ->map(function ($attendance) use ($attendanceService) {
                 $start = $attendance->work_start ? Carbon::parse($attendance->work_start) : null;
                 $end = $attendance->work_end ? Carbon::parse($attendance->work_end) : null;
 
-                // 休憩時間合計（分）
-                $totalBreak = $attendance->attendanceBreaks->reduce(function ($carry, $break) {
-                    $start = $break->rest_start_time ? Carbon::parse($break->rest_start_time) : null;
-                    $end = $break->rest_end_time ? Carbon::parse($break->rest_end_time) : null;
-                    if ($start && $end) {
-                        return $carry + $end->diffInMinutes($start);
-                    }
-                    return $carry;
-                }, 0);
-
-                // 勤務時間（分）
-                $totalTime = ($start && $end) ? $start->diffInMinutes($end) - $totalBreak : null;
+                $totalBreak = $attendanceService->calculateBreakTime($attendance);
+                $totalTime = $attendanceService->calculateWorkingTime($attendance);
 
                 return [
                     'id' => $attendance->id,
-                    'work_date' => $attendance->work_start ? Carbon::parse($attendance->work_start)->format('Y-m-d') : '',
-                    'day' => $attendance->work_start ? Carbon::parse($attendance->work_start)->isoFormat('dd') : '',
+                    'work_date' => $start ? $start->format('Y-m-d') : '',
+                    'day' => $start ? $start->isoFormat('dd') : '',
                     'work_start' => $start ? $start->format('H:i') : '—',
                     'work_end' => $end ? $end->format('H:i') : '—',
                     'break_time' => gmdate('H:i', $totalBreak * 60),
@@ -61,27 +65,24 @@ class AttendanceController extends Controller
         return view('attendance.index', compact(
             'user',
             'attendances',
+            'date',
             'currentMonth',
             'prevMonth',
             'nextMonth'
         ));
     }
 
-    public function show($id)
+    public function show($id, AttendanceService $attendanceService)
     {
-        $attendance = Attendance::findOrFail($id);
+        $attendance = Attendance::with('breaks')->findOrFail($id);
+        $workingMinutes = $attendanceService->calculateWorkingTime($attendance);
 
-        // ガードで判定
         $layout = auth('admin')->check() ? 'layouts.admin' : 'layouts.app';
 
-        return view('attendance.show', [
-            'attendance' => $attendance,
-            'layout' => $layout,
-        ]);
+        return view('attendance.show', compact('attendance', 'layout', 'workingMinutes'));
     }
 
-
-    public function showStaffAttendance($userId, Request $request)
+    public function showStaffAttendance($userId, Request $request, AttendanceService $attendanceService)
     {
         $user = User::findOrFail($userId);
 
@@ -90,33 +91,22 @@ class AttendanceController extends Controller
         $prevMonth = $currentMonth->copy()->subMonth();
         $nextMonth = $currentMonth->copy()->addMonth();
 
-        $attendances = Attendance::with('attendanceBreaks') // リレーション取得
+        $attendances = Attendance::with('breaks')
             ->where('user_id', $userId)
             ->whereMonth('work_start', $currentMonth->month)
             ->whereYear('work_start', $currentMonth->year)
             ->get()
-            ->map(function ($attendance) {
-                // 勤務開始・終了
+            ->map(function ($attendance) use ($attendanceService) {
                 $start = $attendance->work_start ? Carbon::parse($attendance->work_start) : null;
                 $end = $attendance->work_end ? Carbon::parse($attendance->work_end) : null;
 
-                // 休憩合計時間（分）
-                $totalBreak = $attendance->attendanceBreaks->reduce(function ($carry, $break) {
-                    $start = $break->rest_start_time ? Carbon::parse($break->rest_start_time) : null;
-                    $end = $break->rest_end_time ? Carbon::parse($break->rest_end_time) : null;
-                    if ($start && $end) {
-                        return $carry + $end->diffInMinutes($start);
-                    }
-                    return $carry;
-                }, 0);
-
-                // 合計勤務時間（出勤〜退勤 − 休憩）
-                $totalTime = ($start && $end) ? $end->diffInMinutes($start) - $totalBreak : null;
+                $totalBreak = $attendanceService->calculateBreakTime($attendance);
+                $totalTime = $attendanceService->calculateWorkingTime($attendance);
 
                 return [
                     'id' => $attendance->id,
-                    'work_date' => $attendance->work_start ? Carbon::parse($attendance->work_start)->format('Y-m-d') : '',
-                    'day' => $attendance->work_start ? Carbon::parse($attendance->work_start)->isoFormat('dd') : '',
+                    'work_date' => $start ? $start->format('Y-m-d') : '',
+                    'day' => $start ? $start->isoFormat('dd') : '',
                     'start_time' => $start ? $start->format('H:i') : '—',
                     'end_time' => $end ? $end->format('H:i') : '—',
                     'break_time' => gmdate('H:i', $totalBreak * 60),
@@ -132,7 +122,6 @@ class AttendanceController extends Controller
             'nextMonth'
         ));
     }
-
 
     public function create(Request $request)
     {

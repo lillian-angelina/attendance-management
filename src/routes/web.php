@@ -29,7 +29,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/attendance/rest/start', [AttendanceController::class, 'startRest'])->name('attendance.rest.start');
     Route::post('/attendance/rest/end', [AttendanceController::class, 'endRest'])->name('attendance.rest.end');
     Route::post('/attendance/end', [AttendanceController::class, 'endWork'])->name('attendance.end');
-    Route::get('/attendance/list', [AttendanceController::class, 'index'])->name('attendance.index');
+    Route::get('/attendance/list', [AttendanceController::class, 'index'])->name('attendance.list');
     Route::put('/attendance/{attendance}', [AttendanceController::class, 'update'])->name('attendance.update');
 
     // 出勤ボタンのルート
@@ -45,13 +45,13 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/attendance/{id}', [AttendanceController::class, 'show'])->name('attendance.show');
 
 Route::prefix('admin')->name('admin.')->group(function () {
-    // 管理者認証ルート
-    Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('auth.login.form');
+    Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AdminAuthController::class, 'login'])->name('auth.login');
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('auth.logout');
 
     // 認証済み管理者のみアクセス可能
-    Route::middleware(['auth:admin'])->group(function () {
+
+    Route::middleware('auth:admin')->group(function () {
         Route::get('/attendance/list', [AdminAuthController::class, 'index'])->name('attendance.list');
         Route::get('/staff/list', [AdminStaffController::class, 'index'])->name('staff.list');
         Route::get('/attendance/staff/{staff}', [AdminStaffController::class, 'attendance'])->name('attendance.staff');

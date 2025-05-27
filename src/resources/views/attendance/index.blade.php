@@ -9,27 +9,27 @@
 @endsection
 
 @section('content')
-    <div class="attendance-list">
-        <h2>勤怠一覧</h2>
+    <div class="attendance">
+        <h1 class="attendance__title"><span class="attendance__title-line">|</span>勤怠一覧</h1>
 
         {{-- 月切り替えナビゲーション --}}
-        <div class="attendance-list__nav">
-            <a href="{{ route('attendance.index', ['user' => $user->id, 'month' => $prevMonth->format('Y-m')]) }}"
-                class="attendance-list__nav-link">←前月</a>
+        <div class="attendance__navigation">
+            <a href="{{ route('attendance.list', ['date' => $date->copy()->subDay()->format('Y-m-d')]) }}"
+                class="attendance__nav--prev"><img src="{{ asset('images/←.png') }}" alt="#" class="icon">前日</a>
 
-            <div class="attendance-list__month">
-                <i class="fas fa-calendar-alt"><img src="{{ asset('images/calendar-icon.png') }}"></i>
-                {{ $currentMonth->format('Y年m月') }}
+            <div class="attendance__nav--current">
+                <img src="{{ asset('images/calendar-icon.png') }}" alt="カレンダー" class="calendar-icon">
+                <span>{{ $date->format('Y年n月j日') }}</span>
             </div>
 
-            <a href="{{ route('attendance.index', ['user' => $user->id, 'month' => $nextMonth->format('Y-m')]) }}"
-                class="attendance-list__nav-link">翌月→</a>
+            <a href="{{ route('attendance.list', ['date' => $date->copy()->addDay()->format('Y-m-d')]) }}"
+                class="attendance__nav--next">翌日<img src="{{ asset('images/→.png') }}" alt="#" class="icon"></a>
         </div>
 
-        <table border="1" cellspacing="0" cellpadding="8" style="width:100%; margin-top: 20px;">
+        <table class="attendance__table">
             <thead>
-                <tr>
-                    <th>日付</th>
+                <tr class="attendance__table-header">
+                    <th>名前</th>
                     <th>出勤</th>
                     <th>退勤</th>
                     <th>休憩</th>
@@ -39,16 +39,21 @@
             </thead>
             <tbody>
                 @foreach($attendances as $attendance)
-                    <tr>
-                        <td>{{ \Carbon\Carbon::parse($attendance['work_date'])->format('m/d') }} ({{ $attendance['day'] }})</td>
+                    <tr class="attendance__table-row">
+                        <td>{{ \Carbon\Carbon::parse($attendance['work_date'])->format('m/d') }} ({{ $attendance['day'] }})
+                        </td>
                         <td>{{ $attendance['work_start'] }}</td>
                         <td>{{ $attendance['work_end'] }}</td>
                         <td>{{ $attendance['break_time'] }}</td>
                         <td>{{ $attendance['total_time'] }}</td>
-                        <td><a href="{{ url('/attendance/' . $attendance['id']) }}">詳細</a></td>
+                        <td>
+                            <a href="{{ route('attendance.show', ['attendance' => $attendance->id]) }}"
+                                class="attendance__detail-link">詳細</a>
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
+    </div>
     </div>
 @endsection

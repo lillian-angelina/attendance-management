@@ -27,7 +27,7 @@ class AttendanceSeeder extends Seeder
 
             while ($daysAdded < 15) {
                 // 土日スキップ
-                if ($date->isWeekend()) {
+                if ($date->isSaturday() || $date->isSunday()) {
                     $date->addDay();
                     continue;
                 }
@@ -42,6 +42,7 @@ class AttendanceSeeder extends Seeder
 
                 $attendance = Attendance::create([
                     'user_id' => $user->id,
+                    'work_date' => $date,
                     'work_start' => $workStart,
                     'work_end' => $workEnd,
                     'total_time' => $totalMinutes,

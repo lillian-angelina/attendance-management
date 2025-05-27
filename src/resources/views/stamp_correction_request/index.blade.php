@@ -41,7 +41,9 @@
                         <td>{{ \Carbon\Carbon::parse($request['target_date'])->format('Y/m/d') }}</td>
                         <td>{{ $request['reason'] }}</td>
                         <td>{{ \Carbon\Carbon::parse($request['requested_at'])->format('Y/m/d H:i') }}</td>
-                        <td><a href="{{ route('admin.stamp_correction_request.approve', $request['id']) }}">詳細</a></td>
+                        <td>
+                            <a href="{{ route('admin.stamp_correction_request.approve', $request['id']) }}">詳細</a>
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
