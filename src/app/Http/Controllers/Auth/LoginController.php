@@ -29,4 +29,12 @@ class LoginController extends Controller
             'email' => '認証情報が正しくありません。',
         ])->onlyInput('email');
     }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/login')->with('success', 'ログアウトしました');
+    }
 }

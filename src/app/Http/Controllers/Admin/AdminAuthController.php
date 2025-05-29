@@ -61,5 +61,4 @@ class AdminAuthController extends Controller
 
         return back()->with('error', 'メールアドレスまたはパスワードが正しくありません');
     }
-
 }

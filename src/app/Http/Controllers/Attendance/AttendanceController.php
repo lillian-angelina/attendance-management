@@ -76,11 +76,36 @@ class AttendanceController extends Controller
     {
         $attendance = Attendance::with('breaks')->findOrFail($id);
         $workingMinutes = $attendanceService->calculateWorkingTime($attendance);
-
         $layout = auth('admin')->check() ? 'layouts.admin' : 'layouts.app';
 
-        return view('attendance.show', compact('attendance', 'layout', 'workingMinutes'));
+        // 申請理由取得
+        $reasonFromUrl = request()->query('reason');
+        $correctionRequest = \App\Models\AttendanceCorrectionRequest::where('user_id', $attendance->user_id)
+            ->whereDate('target_date', $attendance->work_date)
+            ->latest()
+            ->first();
+        $correctionReason = $reasonFromUrl ?? optional($correctionRequest)->reason;
+
+        $targetDate = request()->query('target_date');
+        if ($targetDate) {
+            $carbonDate = \Carbon\Carbon::parse($targetDate);
+        } else {
+            $carbonDate = \Carbon\Carbon::parse($attendance->work_start);
+        }
+
+        $year = $carbonDate->format('Y年');
+        $monthDay = $carbonDate->format('m月d日');
+
+        return view('attendance.show', [
+            'attendance' => $attendance,
+            'layout' => $layout,
+            'workingMinutes' => $workingMinutes,
+            'correctionReason' => $correctionReason,
+            'year' => $year,
+            'monthDay' => $monthDay,
+        ]);
     }
+
 
     public function showStaffAttendance($userId, Request $request, AttendanceService $attendanceService)
     {

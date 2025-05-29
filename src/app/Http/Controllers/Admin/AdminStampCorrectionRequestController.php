@@ -31,11 +31,12 @@ class AdminStampCorrectionRequestController extends Controller
     // 詳細表示（承認画面）
     public function showApprove(AttendanceCorrectionRequest $attendanceCorrectionRequest)
     {
-        // 承認対象のスタンプ修正申請データを取得
-        $request = $attendanceCorrectionRequest;
+        $attendanceCorrectionRequest = AttendanceCorrectionRequest::with('attendance.breaks')->findOrFail($attendanceCorrectionRequest->id);
 
-        // ビューにデータを渡して表示
-        return view('stamp_correction_requests.approve', compact('request'));
+        return view('stamp_correction_request.approve', [
+            'attendanceCorrectionRequest' => $attendanceCorrectionRequest,
+            'breaks' => $attendanceCorrectionRequest->breaks
+        ]);
     }
 
     // 承認処理

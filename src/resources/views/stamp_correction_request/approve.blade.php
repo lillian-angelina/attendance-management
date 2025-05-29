@@ -31,11 +31,11 @@
                 <span>{{ $attendanceCorrectionRequest->start_time }} ～ {{ $attendanceCorrectionRequest->end_time }}</span>
             </div>
 
-            @if ($attendanceCorrectionRequest->breaks->isNotEmpty())
+            @if ($attendanceCorrectionRequest->attendance && $attendanceCorrectionRequest->attendance->breaks->isNotEmpty())
                 <div class="mb-4">
                     <label class="font-semibold">休憩：</label>
                     <ul class="list-disc pl-5">
-                        @foreach ($attendanceCorrectionRequest->breaks as $index => $break)
+                        @foreach ($attendanceCorrectionRequest->attendance->breaks as $index => $break)
                             <li>
                                 休憩{{ $index + 1 }}：{{ $break->rest_start_time }} ～ {{ $break->rest_end_time }}
                             </li>

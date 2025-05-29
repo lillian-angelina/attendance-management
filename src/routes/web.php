@@ -58,11 +58,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
     });
 });
 
-Route::get('/stamp_correction_request/list', [StampCorrectionRequestController::class, 'index']);
+Route::get('/stamp_correction_request/list', [StampCorrectionRequestController::class, 'index'])
+    ->name('stamp_correction_request.index');
 Route::post('/attendance/{id}/request', [StampCorrectionRequestController::class, 'store'])->name('attendance.request');
-Route::post('/stamp_correction_request/approve/{attendance_correct_request}', [AdminStampCorrectionRequestController::class, 'approve'])->name('admin.stamp_correction_request.approve');
+Route::post('/stamp_correction_request/approve/{attendance_correct_request}', [AdminStampCorrectionRequestController::class, 'approve'])
+    ->name('admin.stamp_correction_request.approve');
 
 // 修正申請詳細（承認画面）
 Route::get('/stamp_correction_request/approve/{attendance_correction_request}', [AdminStampCorrectionRequestController::class, 'showApprove'])
     ->middleware('auth:admin') // 管理者ログイン時のみアクセス可能にする
-    ->name('admin.stamp_correction_request.approve');
+    ->name('admin.stamp_correction_request.showApprove');

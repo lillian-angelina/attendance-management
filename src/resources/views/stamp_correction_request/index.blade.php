@@ -15,16 +15,29 @@
 
 @section('content')
     <div class="stamp-correction-list">
-        <h2>申請一覧</h2>
+        <h1 class="attendance__title">
+            <span class="attendance__title-line">|</span>申請一覧
+        </h1>
 
-        <div style="margin-bottom: 15px;">
-            <button>承認待ち</button>
-            <button>承認済み</button>
+        <div class="attendance__navigation">
+            <a
+                href="{{ url('/stamp_correction_request/list?status=pending' . (request('query') ? '&query=' . urlencode(request('query')) : '')) }}">
+                <button
+                    class="btn button__nav1 {{ request('status') === 'pending' || request('status') === null ? 'button__nav--active' : '' }}">
+                    承認待ち
+                </button>
+            </a>
+            <a
+                href="{{ url('/stamp_correction_request/list?status=approved' . (request('query') ? '&query=' . urlencode(request('query')) : '')) }}">
+                <button class="btn button__nav2 {{ request('status') === 'approved' ? 'button__nav--active' : '' }}">
+                    承認済み
+                </button>
+            </a>
         </div>
 
-        <table border="1" cellspacing="0" cellpadding="8" style="width:100%;">
+        <table class="attendance__table">
             <thead>
-                <tr>
+                <tr class="attendance__table-header">
                     <th>状態</th>
                     <th>名前</th>
                     <th>対象日時</th>
@@ -35,16 +48,27 @@
             </thead>
             <tbody>
                 @foreach($requests as $request)
-                    <tr>
-                        <td>{{ $request['status'] }}</td>
-                        <td>{{ $request['name'] }}</td>
-                        <td>{{ \Carbon\Carbon::parse($request['target_date'])->format('Y/m/d') }}</td>
-                        <td>{{ $request['reason'] }}</td>
-                        <td>{{ \Carbon\Carbon::parse($request['requested_at'])->format('Y/m/d H:i') }}</td>
-                        <td>
-                            <a href="{{ route('admin.stamp_correction_request.approve', $request['id']) }}">詳細</a>
-                        </td>
-                    </tr>
+                    {{-- 一般ユーザーは自分のデータのみ表示 --}}
+                    @if(auth()->user()->is_admin || auth()->id() === $request->user_id)
+                        <tr class="attendance__table-row">
+                            <td>
+                                {{ $request['status'] === 'pending' ? '承認待ち' : ($request['status'] === 'approved' ? '承認済み' : 'その他') }}
+                            </td>
+                            <td>{{ $request->user->name ?? '不明' }}</td>
+                            <td>{{ \Carbon\Carbon::parse($request['target_date'])->format('Y/m/d') }}</td>
+                            <td>{{ $request['reason'] }}</td>
+                            <td>{{ \Carbon\Carbon::parse($request['requested_at'])->format('Y/m/d') }}</td>
+                            <td>
+                                @if (Auth::user()->isAdmin())
+                                    <a href="{{ route('admin.stamp_correction_request.approve', ['id' => $request['id'], 'reason' => $request['reason']]) }}"
+                                        class="attendance__detail-link">詳細</a>
+                                @else
+                                    <a href="{{ route('attendance.show', ['id' => $request['id'], 'reason' => $request['reason'], 'target_date' => $request['target_date']]) }}"
+                                        class="attendance__detail-link">詳細</a>
+                                @endif
+                            </td>
+                        </tr>
+                    @endif
                 @endforeach
             </tbody>
         </table>

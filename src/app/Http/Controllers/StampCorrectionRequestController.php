@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Models\AttendanceCorrectionRequest;
 use App\Models\AttendanceBreak;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Routing\Controller;
 use App\Http\Requests\AttendanceCorrectionRequestRequest;
@@ -15,31 +16,32 @@ use App\Http\Requests\AttendanceCorrectionRequestRequest;
 
 class StampCorrectionRequestController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // 仮の申請データ（実際はDBから取得する）
-        $requests = [
-            [
-                'id' => 1,
-                'status' => '承認待ち',
-                'name' => '山田 太郎',
-                'target_date' => '2025-05-01',
-                'reason' => '打刻漏れのため',
-                'requested_at' => '2025-05-02 10:15:00',
-            ],
-            [
-                'id' => 2,
-                'status' => '承認済み',
-                'name' => '佐藤 花子',
-                'target_date' => '2025-04-30',
-                'reason' => '出勤時間修正',
-                'requested_at' => '2025-05-01 09:00:00',
-            ],
-        ];
+        // 管理者認証と一般ユーザー認証のどちらでログインしているかを確認
+        $isAdmin = auth('admin')->check();
+        $user = $isAdmin ? auth('admin')->user() : auth()->user();
 
-        $layout = auth('admin')->check() ? 'layouts.admin' : 'layouts.app';
+        // レイアウト切り替え
+        $layout = $isAdmin ? 'layouts.admin' : 'layouts.app';
 
-        return view('stamp_correction_request.index', compact('requests', 'layout'));
+        // ステータス絞り込み（例: pending / approved）
+        $status = $request->input('status', 'pending');
+
+        // クエリビルダー
+        $query = AttendanceCorrectionRequest::with('user')->where('status', $status);
+
+        // 管理者でなければ、自分のデータのみに絞る
+        if (!$isAdmin) {
+            $query->where('user_id', $user->id);
+        }
+
+        $requests = $query->get();
+
+        return view('stamp_correction_request.index', [
+            'layout' => $layout,
+            'requests' => $requests,
+        ]);
     }
 
     // ★ 申請保存処理を追加

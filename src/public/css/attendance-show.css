@@ -1,0 +1,164 @@
+input[type="time"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}
+
+input[type="time"]::-moz-calendar-picker-indicator {
+    display: none;
+}
+
+body {
+    background: #F0EFF2;
+    margin: 0 auto;
+}
+
+.stamp-correction-list {
+    max-width: none;
+    height: auto;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    margin: 30px auto;
+}
+
+.attendance__title-line {
+    width: 40px;
+    border: 1px solid #000000;
+    background: #000000;
+    margin: 0 20px 0 0;
+}
+
+.attendance-detail {
+    display: inline-block;
+    background: #F0EFF2;
+    width: 900px;
+    height: 60px;
+    margin: 20px 25%;
+}
+
+.attendance-detail__group {
+    background: #FFFFFF;
+    width: 900px;
+    height: 555px;
+    border-radius: 10px;
+    margin: 30px 0;
+}
+
+.attendance-detail__name,
+.attendance-detail__display,
+.form-group {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    width: 900px;
+    height: 92px;
+    border-bottom: 2px solid #E1E1E1;
+}
+
+.form-group-note {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    width: 900px;
+    height: 92px;
+}
+
+.attendance-detail__name-text,
+.attendance-detail__ymd,
+.form__work-start,
+.form__break-time,
+.form__note {
+    margin: 0 20px 0 50px;
+    font-family: Inter;
+    font-weight: 700;
+    font-size: 16px;
+    color: #737373;
+}
+
+.attendance-detail__year {
+    margin: 0 200px 0 270px;
+    font-family: Inter;
+    font-weight: 700;
+    font-size: 16px;
+    color: #000000;
+}
+
+.attendance-detail__day {
+    color: #000000;
+}
+
+.attendance-detail__name-value {
+    margin: 0 270px;
+    font-family: Inter;
+    font-weight: 700;
+    font-size: 16px;
+    color: #000000;
+}
+
+.form__work-start__input,
+.form__work-end__input,
+.form__break-time__input-start,
+.form__break-time__input-start2,
+.form__break-time__input-end {
+    width: 103px;
+    height: 28px;
+    font-family: Inter;
+    font-weight: 700;
+    font-size: 16px;
+    text-align: center;
+    border: 1px solid #E1E1E1;
+    border-radius: 4px;
+    color: #000000;
+}
+
+.form__work-start__input {
+    margin: 0 80px 0 180px;
+}
+
+.form__work-end__input,
+.form__break-time__input-end {
+    margin: 0 0 0 80px;
+}
+
+.form__break-time__input-start,
+.form__note__textarea {
+    margin: 0 80px 0 230px;
+}
+
+.form__break-time__input-start2 {
+    margin: 0 80px 0 222px;
+}
+
+.form__note__textarea {
+    padding: 10px;
+    font-weight: 700;
+    font-size: 14px;
+    color: #000000;
+    width: 316px;
+    height: 72px;
+    border: 1px solid #D9D9D9;
+    border-radius: 4px;
+    resize: none;
+}
+
+.button-group {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    width: 900px;
+    height: 50px;
+}
+
+.btn {
+    width: 130px;
+    height: 50px;
+    margin: 0;
+    font-family: Inter;
+    font-weight: 700;
+    font-size: 22px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    color: #FFFFFF;
+    background: #000000;
+}

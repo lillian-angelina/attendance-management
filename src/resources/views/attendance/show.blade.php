@@ -15,43 +15,80 @@
 
 @section('content')
     <div class="attendance-detail">
-        <h2>勤怠詳細</h2>
+        <h2><span class="attendance__title-line">|</span>勤怠詳細</h2>
 
-        {{-- 現在のデータの表示 --}}
-        <div class="attendance-detail__display">
-            <p class="attendance-detail__ymd">日付<span class="attendance-detail__start">{{ \Carbon\Carbon::parse($attendance->work_start)->format('Y/m/d') }}
-                ({{ \Carbon\Carbon::parse($attendance->work_start)->isoFormat('ddd') }})</span></p>
-        </div>
+        <div class="attendance-detail__group">
+            <div class="attendance-detail__name">
+                <p class="attendance-detail__name-text">
+                    名前
+                    <span class="attendance-detail__name-value">
+                        {{ $attendance->user->name ?? '不明' }}
+                    </span>
+            </div>
 
-        {{-- 修正フォーム --}}
-        @if (!$attendance->is_edited)
-            <form action="{{ route('attendance.update', ['attendance' => $attendance->id]) }}" method="POST"
-                class="attendance-detail__form">
-                @csrf
-                @method('PUT')
+            {{-- 現在のデータの表示 --}}
+            <div class="attendance-detail__display">
+                <p class="attendance-detail__ymd">
+                    日付
+                    <span class="attendance-detail__year">
+                        {{ $year }}
+                    </span>
+                    <span class="attendance-detail__day">
+                        {{ $monthDay }}
+                    </span>
+                </p>
+            </div>
 
-                <div class="form-group">
-                    <label for="work_start">出勤・退勤</label>
-                    <input type="time" name="work_start" id="work_start"
-                        value="{{ \Carbon\Carbon::parse($attendance->work_start)->format('H:i') }}">
-                    <label for="work_end">～</label>
-                    <input type="time" name="work_end" id="work_end"
-                        value="{{ \Carbon\Carbon::parse($attendance->work_end)->format('H:i') }}">
+            {{-- 修正フォーム --}}
+            @if (!$attendance->is_edited)
+                    <form action="{{ route('attendance.update', ['attendance' => $attendance->id]) }}" method="POST"
+                        class="attendance-detail__form">
+                        @csrf
+                        @method('PUT')
+
+                        <div class="form-group">
+                            <label class="form__work-start" for="work_start">出勤・退勤</label>
+                            <input class="form__work-start__input" type="time" name="work_start" id="work_start"
+                                value="{{ \Carbon\Carbon::parse($attendance->work_start)->format('H:i') }}">
+                            <label class="form__work-end" for="work_end">～</label>
+                            <input class="form__work-end__input" type="time" name="work_end" id="work_end"
+                                value="{{ \Carbon\Carbon::parse($attendance->work_end)->format('H:i') }}">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form__break-time" for="break_time">休憩</label>
+                            <input class="form__break-time__input-start" type="time" name="break_time" id="break_time"
+                                value="{{ optional($attendance->breaks->first())->rest_start_time ? \Carbon\Carbon::parse($attendance->breaks->first()->rest_start_time)->format('H:i') : '' }}">
+                            <label class="form__break-time_end" for="break-time_end">～</label>
+                            <input class="form__break-time__input-end" type="time" name="break_time" id="break_time"
+                                value="{{ optional($attendance->breaks->last())->rest_end_time ? \Carbon\Carbon::parse($attendance->breaks->last()->rest_end_time)->format('H:i') : '' }}">
+                        </div>
+
+                        @foreach ($attendance->breaks as $break)
+                            <div class="form-group">
+                                <label class="form__break-time" for="break_time_{{ $loop->index }}">
+                                    休憩{{ $loop->iteration + 1 }}
+                                </label>
+                                <input class="form__break-time__input-start2" type="time" name="break_time[]"
+                                    id="break_time_{{ $loop->index }}"
+                                    value="{{ \Carbon\Carbon::parse($break->rest_start_time)->format('H:i') }}">
+                                <label class="form__break-time_end" for="break-time_end">～</label>
+                                <input class="form__break-time__input-end" type="time" name="break_time" id="break_time"
+                                    value="{{ optional($attendance->breaks->last())->rest_end_time ? \Carbon\Carbon::parse($attendance->breaks->last()->rest_end_time)->format('H:i') : '' }}">
+                            </div>
+                        @endforeach
+
+                        <div class="form-group-note">
+                            <label class="form__note" for="note">備考</label>
+                            <textarea class="form__note__textarea" name="note" id="note" class="form-control"
+                                rows="4">{{ old('note', $correctionReason ?? $attendance->note) }}</textarea>
+                        </div>
                 </div>
-
-                <div class="form-group">
-                    <label for="break_time">休憩</label>
-                    <input type="number" name="break_time" id="break_time" value="{{ $attendance->break_time ?? 60 }}">
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">修正</button>
                 </div>
-
-                <div class="form-group">
-                    <label for="note">備考</label>
-                    <textarea name="note" id="note">{{ $attendance->note }}</textarea>
-                </div>
-
-                <button type="submit" class="btn btn-primary">修正</button>
-            </form>
-        @else
+                </form>
+            @else
             <p style="color: red;">※承認待ちのため修正はできません</p>
         @endif
     </div>

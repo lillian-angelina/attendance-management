@@ -27,9 +27,18 @@ class AttendanceCorrectionRequest extends Model
         return $this->belongsTo(User::class);
     }
 
-    // 複数の休憩とのリレーション（1対多）
-    public function breaks()
+    public function attendance()
     {
-        return $this->hasMany(AttendanceBreak::class);
+        return $this->belongsTo(Attendance::class);
+    }
+
+    public function scopeApproved($query)
+    {
+        return $query->where('status', '承認済み');
+    }
+
+    public function scopePending($query)
+    {
+        return $query->where('status', '承認待ち');
     }
 }
