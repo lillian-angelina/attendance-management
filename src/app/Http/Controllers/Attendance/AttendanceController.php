@@ -26,20 +26,20 @@ class AttendanceController extends Controller
     {
         $user = Auth::user();
 
-        $month = $request->query('month', now()->format('Y-m'));
-        $currentMonth = Carbon::createFromFormat('Y-m', $month)->startOfMonth();
+        // クエリパラメータから「月」を取得（例: '2025-04'）
+        $monthParam = $request->query('month');
+
+        // Carbon化（'Y-m' 形式から、月初日にする）
+        $currentMonth = $monthParam
+            ? Carbon::createFromFormat('Y-m', $monthParam)->startOfMonth()
+            : Carbon::now()->startOfMonth();
+
+        // 前月・翌月のCarbonオブジェクトを作成
         $prevMonth = $currentMonth->copy()->subMonth();
         $nextMonth = $currentMonth->copy()->addMonth();
 
-        $date = $request->input('date')
-            ? Carbon::parse($request->input('date'))
-            : Carbon::today();
-
-        $attendances = Attendance::with(['user', 'attendanceBreaks'])
-            ->whereDate('work_start', $date)
-            ->get();
-
-        $attendances = Attendance::with('breaks')
+        // 出勤データ取得（該当月）
+        $attendances = Attendance::with(['user', 'attendanceBreaks', 'breaks'])
             ->where('user_id', $user->id)
             ->whereMonth('work_start', $currentMonth->month)
             ->whereYear('work_start', $currentMonth->year)
@@ -62,10 +62,13 @@ class AttendanceController extends Controller
                 ];
             });
 
+        // 表示確認のため一時的にログ出力（開発中のみ）
+        \Log::debug('monthParam: ' . $monthParam);
+        \Log::debug('currentMonth: ' . $currentMonth->format('Y-m'));
+
         return view('attendance.index', compact(
             'user',
             'attendances',
-            'date',
             'currentMonth',
             'prevMonth',
             'nextMonth'
@@ -250,23 +253,16 @@ class AttendanceController extends Controller
 
     public function update(Request $request, Attendance $attendance)
     {
-        $request->validate([
-            'work_start' => 'required|date_format:H:i',
-            'work_end' => 'required|date_format:H:i|after:work_start',
-            'break_time' => 'nullable|integer|min:0',
-            'note' => 'nullable|string|max:255',
+        // 勤怠情報の更新処理
+        $attendance->update([
+            'work_start' => $request->input('work_start'),
+            'work_end' => $request->input('work_end'),
+            'note' => $request->input('note'),
+            'is_edited' => true, // 修正済みフラグを立てる
         ]);
 
-        // 日付を保持したまま時間だけ更新
-        $date = \Carbon\Carbon::parse($attendance->work_start)->format('Y-m-d');
-        $attendance->work_start = $date . ' ' . $request->work_start . ':00';
-        $attendance->work_end = $date . ' ' . $request->work_end . ':00';
-        $attendance->break_time = $request->break_time;
-        $attendance->note = $request->note;
-        $attendance->is_edited = true; // 修正申請フラグ
-
-        $attendance->save();
-
-        return redirect()->back()->with('success', '修正申請が送信されました。');
+        // セッションにフラッシュメッセージを保存
+        return redirect()->route('attendance.show', ['attendance' => $attendance->id])
+            ->with('status', 'edited');
     }
 }

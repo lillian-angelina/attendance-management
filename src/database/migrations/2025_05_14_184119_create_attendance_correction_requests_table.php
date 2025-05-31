@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('attendance_correction_requests', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('attendance_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('name')->nullable();
             $table->date('date')->nullable();
             $table->time('start_time')->nullable();

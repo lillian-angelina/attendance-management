@@ -72,6 +72,7 @@ body {
     width: 900px;
     height: 40px;
     color: #737373;
+    border-bottom: 3px solid #E1E1E1;
 }
 
 th {
@@ -85,7 +86,9 @@ th {
     width: 900px;
     height: 33px;
     margin: 5px 0;
-    border: 2px solid #E1E1E1;
+    border-top: 2px solid #E1E1E1;
+    border-left: none;
+    border-right: none;
     color: #737373;
 }
 

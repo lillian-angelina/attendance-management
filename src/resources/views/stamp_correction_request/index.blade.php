@@ -48,22 +48,21 @@
             </thead>
             <tbody>
                 @foreach($requests as $request)
-                    {{-- 一般ユーザーは自分のデータのみ表示 --}}
-                    @if(auth()->user()->is_admin || auth()->id() === $request->user_id)
+                    @if($isAdmin || auth()->id() === $request->user_id)
                         <tr class="attendance__table-row">
-                            <td>
-                                {{ $request['status'] === 'pending' ? '承認待ち' : ($request['status'] === 'approved' ? '承認済み' : 'その他') }}
+                            <td>{{ $request['status'] === 'pending' ? '承認待ち' : ($request['status'] === 'approved' ? '承認済み' : 'その他') }}
                             </td>
                             <td>{{ $request->user->name ?? '不明' }}</td>
                             <td>{{ \Carbon\Carbon::parse($request['target_date'])->format('Y/m/d') }}</td>
                             <td>{{ $request['reason'] }}</td>
                             <td>{{ \Carbon\Carbon::parse($request['requested_at'])->format('Y/m/d') }}</td>
                             <td>
-                                @if (Auth::user()->isAdmin())
-                                    <a href="{{ route('admin.stamp_correction_request.approve', ['id' => $request['id'], 'reason' => $request['reason']]) }}"
+                                @if ($isAdmin)
+                                    <a href="{{ route('stamp_correction_request.approve.show', ['attendanceCorrectionRequest' => $request['id']]) }}"
                                         class="attendance__detail-link">詳細</a>
+
                                 @else
-                                    <a href="{{ route('attendance.show', ['id' => $request['id'], 'reason' => $request['reason'], 'target_date' => $request['target_date']]) }}"
+                                    <a href="{{ route('attendance.show', ['attendance' => $request['id'], 'reason' => $request['reason'], 'target_date' => $request['target_date']]) }}"
                                         class="attendance__detail-link">詳細</a>
                                 @endif
                             </td>
