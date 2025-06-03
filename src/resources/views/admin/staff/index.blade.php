@@ -11,11 +11,11 @@
 
 @section('content')
     <div class="staff">
-        <h1 class="staff__title">スタッフ一覧</h1>
+        <h1 class="staff__title"><span class="staff__title-line">|</span>スタッフ一覧</h1>
 
         <table class="staff__table">
             <thead>
-                <tr>
+                <tr class="staff__table-header">
                     <th>名前</th>
                     <th>メールアドレス</th>
                     <th>月次勤怠</th>
@@ -23,7 +23,7 @@
             </thead>
             <tbody>
                 @forelse($users as $user)
-                    <tr>
+                    <tr class="staff__table-row">
                         <td>{{ $user->name }}</td>
                         <td>{{ $user->email }}</td>
                         <td>

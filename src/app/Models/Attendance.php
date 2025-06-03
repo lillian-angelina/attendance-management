@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\AttendanceBreak;
+use App\Models\AttendanceRequest;
+use App\Models\AttendanceCorrectionRequest;
+use App\Models\User;
 
 class Attendance extends Model
 {
@@ -12,8 +15,12 @@ class Attendance extends Model
 
     protected $fillable = [
         'user_id',
+        'work_date',
         'work_start',
         'work_end',
+        'break_time',
+        'total_time',
+        'is_edited',
     ];
 
     // ユーザーとのリレーション（User モデルがある前提）
@@ -35,5 +42,10 @@ class Attendance extends Model
     public function requests()
     {
         return $this->hasMany(AttendanceRequest::class);
+    }
+
+    public function AttendanceCorrectionRequest()
+    {
+        return $this->hasMany(AttendanceCorrectionRequest::class);
     }
 }

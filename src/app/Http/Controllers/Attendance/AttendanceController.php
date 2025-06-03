@@ -37,14 +37,16 @@ class AttendanceController extends Controller
         // 前月・翌月のCarbonオブジェクトを作成
         $prevMonth = $currentMonth->copy()->subMonth();
         $nextMonth = $currentMonth->copy()->addMonth();
+        $startDate = $currentMonth->copy()->startOfMonth()->startOfDay(); // 2025-06-01 00:00:00
+        $endDate = $currentMonth->copy()->endOfMonth()->endOfDay();       // 2025-06-30 23:59:59
 
         // 出勤データ取得（該当月）
         $attendances = Attendance::with(['user', 'attendanceBreaks', 'breaks'])
             ->where('user_id', $user->id)
-            ->whereMonth('work_start', $currentMonth->month)
-            ->whereYear('work_start', $currentMonth->year)
+            ->whereBetween('work_start', [$startDate, $endDate])
             ->get()
             ->map(function ($attendance) use ($attendanceService) {
+                $date = $attendance->work_date ? Carbon::parse($attendance->work_date) : null;
                 $start = $attendance->work_start ? Carbon::parse($attendance->work_start) : null;
                 $end = $attendance->work_end ? Carbon::parse($attendance->work_end) : null;
 
@@ -53,7 +55,7 @@ class AttendanceController extends Controller
 
                 return [
                     'id' => $attendance->id,
-                    'work_date' => $start ? $start->format('Y-m-d') : '',
+                    'work_date' => $date ? $date->format('Y-m-d') : '',
                     'day' => $start ? $start->isoFormat('dd') : '',
                     'work_start' => $start ? $start->format('H:i') : '—',
                     'work_end' => $end ? $end->format('H:i') : '—',
@@ -61,10 +63,6 @@ class AttendanceController extends Controller
                     'total_time' => $totalTime !== null ? gmdate('H:i', $totalTime * 60) : '—',
                 ];
             });
-
-        // 表示確認のため一時的にログ出力（開発中のみ）
-        \Log::debug('monthParam: ' . $monthParam);
-        \Log::debug('currentMonth: ' . $currentMonth->format('Y-m'));
 
         return view('attendance.index', compact(
             'user',
@@ -253,15 +251,31 @@ class AttendanceController extends Controller
 
     public function update(Request $request, Attendance $attendance)
     {
-        // 勤怠情報の更新処理
-        $attendance->update([
-            'work_start' => $request->input('work_start'),
-            'work_end' => $request->input('work_end'),
-            'note' => $request->input('note'),
-            'is_edited' => true, // 修正済みフラグを立てる
+        $request->validate([
+            'work_start' => 'nullable|date_format:H:i',
+            'work_end' => 'nullable|date_format:H:i|after:work_start',
         ]);
 
-        // セッションにフラッシュメッセージを保存
+        // 勤怠情報を更新
+        $attendance->work_start = $request->input('work_start');
+        $attendance->work_end = $request->input('work_end');
+        $attendance->note = $request->input('note');
+        $attendance->is_edited = true; // 修正済みフラグ
+
+        // 総労働時間を再計算（nullでないときだけ）
+        if ($attendance->work_start && $attendance->work_end) {
+            $workStart = Carbon::parse($attendance->work_start);
+            $workEnd = Carbon::parse($attendance->work_end);
+            $breakTime = $attendance->break_time ?? 0;
+
+            $totalTime = $workStart->diffInMinutes($workEnd);
+            $attendance->total_time = max($totalTime - $breakTime, 0); // マイナス防止
+        } else {
+            $attendance->total_time = null; // 不明な場合は null
+        }
+
+        $attendance->save();
+
         return redirect()->route('attendance.show', ['attendance' => $attendance->id])
             ->with('status', 'edited');
     }
