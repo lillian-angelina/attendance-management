@@ -22,20 +22,16 @@ Route::post('/register', [RegisterController::class, 'register']);
 // メール認証
 Route::get('/email/verify', [VerificationController::class, 'notice'])->name('verification.notice');
 Route::post('/email/verification-notification', [VerificationController::class, 'resend'])->name('verification.send');
-
 Route::middleware(['auth'])->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'create'])->name('attendance.create');
-    Route::post('/attendance/start', [AttendanceController::class, 'startWork'])->name('attendance.start');
-    Route::post('/attendance/rest/start', [AttendanceController::class, 'startRest'])->name('attendance.rest.start');
-    Route::post('/attendance/rest/end', [AttendanceController::class, 'endRest'])->name('attendance.rest.end');
-    Route::post('/attendance/end', [AttendanceController::class, 'endWork'])->name('attendance.end');
+
     Route::get('/attendance/list', [AttendanceController::class, 'index'])->name('attendance.list');
     Route::put('/attendance/{attendance}', [AttendanceController::class, 'update'])->name('attendance.update');
 
     // 出勤ボタンのルート
-    Route::post('/attendance/clock-in', [AttendanceController::class, 'startWork'])->name('attendance.clockIn');
+    Route::post('/attendance/start', [AttendanceController::class, 'startWork'])->name('attendance.startWork');
     // 退勤ボタンのルート
-    Route::post('/attendance/clock-out', [AttendanceController::class, 'endWork'])->name('attendance.clockOut');
+    Route::post('/attendance/end', [AttendanceController::class, 'endWork'])->name('attendance.endWork');
     // 休憩入ボタンのルート
     Route::post('/attendance/rest-start', [AttendanceController::class, 'startRest'])->name('attendance.restStart');
     // 休憩戻ボタンのルート

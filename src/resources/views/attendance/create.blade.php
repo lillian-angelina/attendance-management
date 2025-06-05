@@ -30,20 +30,20 @@
         {{-- 日付と時間の表示 --}}
         <div class="attendance__datetime">
             <p class="attendance__datetime-ymd">{{ $today }}（{{ $weekday }}）</p>
-            <p class="attendance__datetime-hi">{{ \Carbon\Carbon::now()->format('H:i') }}</p>
+            <p id="liveTime" class="attendance__datetime-hi">{{ \Carbon\Carbon::now()->format('H:i') }}</p>
         </div>
 
         {{-- ボタン表示 --}}
         @if($status === 'none')
             {{-- 未出勤 --}}
-            <form class="form-clockin" method="POST" action="{{ route('attendance.clockIn') }}">
+            <form class="form-clockin" method="POST" action="{{ route('attendance.startWork') }}">
                 @csrf
                 <button type="submit" class="attendance__submit-button">出勤</button>
             </form>
         @elseif($status === 'working')
             {{-- 出勤中 --}}
             <div class="form-submit">
-                <form class="form-clockout" method="POST" action="{{ route('attendance.clockOut') }}">
+                <form class="form-clockout" method="POST" action="{{ route('attendance.endWork') }}">
                     @csrf
                     <button type="submit" class="attendance__submit-button">退勤</button>
                 </form>
@@ -63,4 +63,17 @@
             <p class="attendance__message">お疲れ様でした。</p>
         @endif
     </div>
+@endsection
+
+@section('js')
+<script>
+    function updateTime() {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById('liveTime').textContent = `${hours}:${minutes}`;
+    }
+    updateTime();
+    setInterval(updateTime, 60000); // 1分ごとに更新
+</script>
 @endsection

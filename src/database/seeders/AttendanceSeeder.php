@@ -44,7 +44,7 @@ class AttendanceSeeder extends Seeder
     private function createAttendanceData(User $user): void
     {
         $daysAdded = 0;
-        $date = Carbon::create(2025, 6, 1); // 初期日付（固定）
+        $date = Carbon::create(2023, 6, 1); // 初期日付（固定）
 
         while ($daysAdded < 40) {
             if ($date->isSaturday() || $date->isSunday()) {

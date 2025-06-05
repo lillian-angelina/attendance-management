@@ -53,7 +53,7 @@ class StampCorrectionRequestController extends Controller
             'date' => $request->input('date'),
             'work_start' => $request->input('work_start'),
             'work_end' => $request->input('work_end'),
-            'note' => $request->input('note'),
+            'reason' => $request->input('reason'),
             'status' => 'pending',
             'requested_at' => Carbon::now(),
         ]);

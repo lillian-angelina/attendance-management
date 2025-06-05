@@ -152,12 +152,12 @@ class AttendanceController extends Controller
     public function create(Request $request)
     {
         $user = Auth::user();
+        $today = Carbon::today();
 
         $attendance = Attendance::where('user_id', $user->id)
-            ->whereDate('work_start', Carbon::today())
+            ->whereDate('work_date', Carbon::today())
             ->latest()
             ->first();
-
         $status = 'none';
 
         $lastRest = null;
@@ -165,15 +165,18 @@ class AttendanceController extends Controller
             $lastRest = $attendance->attendanceBreaks()->latest()->first();
         }
 
-        if ($attendance && $attendance->work_end) {
+        if (!$attendance) {
+            $status = 'none';
+        } elseif ($attendance->work_end) {
             $status = 'finished';
-        } elseif ($lastRest && is_null($lastRest->rest_end)) {
+        } elseif ($attendance->attendanceBreaks()->whereNull('rest_end_time')->exists()) {
             $status = 'resting';
-        } elseif ($attendance && $attendance->work_start) {
+        } elseif ($attendance->work_start) {
             $status = 'working';
+        } else {
+            $status = 'none';
         }
 
-        $today = Carbon::today();
         $weekday = $today->isoFormat('dddd');
 
         return view('attendance.create', [
@@ -184,14 +187,16 @@ class AttendanceController extends Controller
         ]);
     }
 
+
     public function startWork()
     {
         Attendance::create([
             'user_id' => Auth::id(),
             'work_start' => Carbon::now(),
+            'work_date' => Carbon::today(),
         ]);
 
-        return redirect()->back();
+        return redirect()->route('attendance.create');
     }
 
     // 休憩開始
@@ -204,7 +209,7 @@ class AttendanceController extends Controller
 
         if ($attendance) {
             $attendance->attendanceBreaks()->create([
-                'rest_start' => Carbon::now(),
+                'rest_start_time' => Carbon::now(),
             ]);
         }
 
@@ -221,13 +226,13 @@ class AttendanceController extends Controller
 
         if ($attendance) {
             $restLog = $attendance->attendanceBreaks()
-                ->whereNull('rest_end')
+                ->whereNull('rest_end_time')
                 ->latest()
                 ->first();
 
             if ($restLog) {
                 $restLog->update([
-                    'rest_end' => Carbon::now(),
+                    'rest_end_time' => Carbon::now(),
                 ]);
             }
         }
@@ -261,6 +266,8 @@ class AttendanceController extends Controller
         $attendance->work_end = $request->input('work_end');
         $attendance->note = $request->input('note');
         $attendance->is_edited = true; // 修正済みフラグ
+        $attendance->work_start = Carbon::createFromFormat('H:i', $request->input('work_start'));
+        $attendance->work_end = Carbon::createFromFormat('H:i', $request->input('work_end'));
 
         // 総労働時間を再計算（nullでないときだけ）
         if ($attendance->work_start && $attendance->work_end) {
