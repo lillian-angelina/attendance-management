@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use App\Models\AttendanceCorrectionRequest;
+use App\Models\Attendance;
 
 class AttendanceBreak extends Model
 {
@@ -19,6 +19,6 @@ class AttendanceBreak extends Model
     // 親の勤怠修正申請とのリレーション
     public function correctionRequest()
     {
-        return $this->belongsTo(AttendanceCorrectionRequest::class);
+        return $this->belongsTo(Attendance::class);
     }
 }

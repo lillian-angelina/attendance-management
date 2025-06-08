@@ -81,7 +81,7 @@ class AttendanceController extends Controller
 
         // 申請理由取得
         $reasonFromUrl = request()->query('reason');
-        $correctionRequest = \App\Models\AttendanceCorrectionRequest::where('user_id', $attendance->user_id)
+        $correctionRequest = \App\Models\Attendance::where('user_id', $attendance->user_id)
             ->whereDate('target_date', $attendance->work_date)
             ->latest()
             ->first();
@@ -264,7 +264,9 @@ class AttendanceController extends Controller
         // 勤怠情報を更新
         $attendance->work_start = $request->input('work_start');
         $attendance->work_end = $request->input('work_end');
-        $attendance->note = $request->input('note');
+        $attendance->reason = $request->input('reason');
+        $attendance->status = 'pending';
+        $attendance->requested_at = now();
         $attendance->is_edited = true; // 修正済みフラグ
         $attendance->work_start = Carbon::createFromFormat('H:i', $request->input('work_start'));
         $attendance->work_end = Carbon::createFromFormat('H:i', $request->input('work_end'));

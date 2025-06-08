@@ -15,10 +15,13 @@ return new class extends Migration {
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // ユーザーに紐づく
             $table->dateTime('work_start');     // 出勤時間
             $table->dateTime('work_end')->nullable();       // 退勤時間
-            $table->string('note')->nullable();             // メモ
+            $table->string('reason')->nullable();             // 修正理由
             $table->date('work_date');         // 勤務日
             $table->integer('break_time')->nullable();        // 勤務時間
             $table->integer('total_time')->nullable();        // 勤務時間（分など数値で保存推奨）
+            $table->string('status')->default('pending'); // 修正ステータス
+            $table->timestamp('requested_at')->nullable();  // 修正申請日時
+            $table->string('target_date')->nullable(); // 任意（用途次第）
             $table->boolean('is_edited')->default(false);   // 編集フラグ
             $table->timestamps();                           // created_at, updated_at
         });

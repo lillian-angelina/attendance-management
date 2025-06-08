@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\AttendanceBreak;
 use App\Models\AttendanceRequest;
-use App\Models\AttendanceCorrectionRequest;
 use App\Models\User;
 
 class Attendance extends Model
@@ -15,12 +14,17 @@ class Attendance extends Model
 
     protected $fillable = [
         'user_id',
-        'work_date',
         'work_start',
         'work_end',
+        'note',
+        'work_date',
         'break_time',
         'total_time',
         'is_edited',
+        'status',
+        'reason',
+        'requested_at',
+        'target_date',
     ];
 
     // ユーザーとのリレーション（User モデルがある前提）
@@ -44,8 +48,13 @@ class Attendance extends Model
         return $this->hasMany(AttendanceRequest::class);
     }
 
-    public function AttendanceCorrectionRequest()
+    public function scopeApproved($query)
     {
-        return $this->hasMany(AttendanceCorrectionRequest::class);
+        return $query->where('status', '承認済み');
+    }
+
+    public function scopePending($query)
+    {
+        return $query->where('status', '承認待ち');
     }
 }

@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\DB;
 
 class AttendanceSeeder extends Seeder
 {
+    protected $model = Attendance::class;
+
     public function run(): void
     {
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
@@ -43,6 +45,15 @@ class AttendanceSeeder extends Seeder
     //  ユーザーごとの勤怠データ生成処理を共通関数化
     private function createAttendanceData(User $user): void
     {
+        $statusOptions = ['pending', 'approved'];
+        $reasons = [
+            '打刻忘れのため修正を希望します。',
+            '出勤時刻に誤りがあります。',
+            '退勤が正しく記録されていません。',
+            '休憩時間の修正をお願いします。',
+            '外出時間が反映されていません。'
+        ];
+
         $daysAdded = 0;
         $date = Carbon::create(2023, 6, 1); // 初期日付（固定）
 
@@ -70,6 +81,9 @@ class AttendanceSeeder extends Seeder
                 'work_end' => $workEnd,         // TIME型
                 'break_time' => $breakMinutes,                   // int
                 'total_time' => $totalMinutes,                   // int
+                'status' => $statusOptions[array_rand($statusOptions)],
+                'target_date' => $date->toDateString(), // 任意の用途に使用
+                'reason' => $reasons[array_rand($reasons)],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

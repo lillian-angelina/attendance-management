@@ -24,6 +24,7 @@
                     <span class="attendance-detail__name-value">
                         {{ $attendance->user->name ?? '不明' }}
                     </span>
+                </p>
             </div>
 
             {{-- 現在のデータの表示 --}}
@@ -78,9 +79,9 @@
                 @endforeach
 
                 <div class="form-group-note">
-                    <label class="form__note" for="note">備考</label>
-                    <textarea class="form__note__textarea" name="note" id="note" class="form-control"
-                        rows="4">{{ old('note', $correctionReason ?? $attendance->note) }}</textarea>
+                    <label class="form__note" for="reason">備考</label>
+                    <textarea class="form__note__textarea" name="reason" id="reason"
+                        rows="4">{{ old('reason', $correctionReason ?? '') }}</textarea>
                 </div>
         </div>
         @if (!$attendance->is_edited)

@@ -8,7 +8,6 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\AttendanceSeeder;
 use Database\Seeders\TestUserSeeder;
 use Database\Seeders\AdminSeeder;
-use Database\Seeders\AttendanceCorrectionRequestSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -22,7 +21,5 @@ class DatabaseSeeder extends Seeder
         $this->call(AttendanceSeeder::class);
 
         $this->call(AdminSeeder::class);
-
-        $this->call(AttendanceCorrectionRequestSeeder::class);
     }
 }

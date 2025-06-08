@@ -4,13 +4,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AttendanceCorrectionRequest;
 use App\Models\AttendanceBreak;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Routing\Controller;
-use App\Http\Requests\AttendanceCorrectionRequestRequest;
+use App\Models\Attendance;
 
 
 
@@ -29,7 +28,7 @@ class StampCorrectionRequestController extends Controller
         $status = $request->input('status', 'pending');
 
         // クエリビルダー
-        $query = AttendanceCorrectionRequest::with('user')->where('status', $status);
+        $query = Attendance::with('user')->where('status', $status);
 
         // 管理者でなければ、自分のデータのみに絞る
         if (!$isAdmin) {
@@ -46,9 +45,9 @@ class StampCorrectionRequestController extends Controller
     }
 
     // ★ 申請保存処理を追加
-    public function store(AttendanceCorrectionRequestRequest $request)
+    public function store(Request $request)
     {
-        $correctionRequest = AttendanceCorrectionRequest::create([
+        $correctionRequest = Attendance::create([
             'user_id' => Auth::id(),
             'date' => $request->input('date'),
             'work_start' => $request->input('work_start'),
