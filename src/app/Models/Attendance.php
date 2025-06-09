@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\AttendanceBreak;
 use App\Models\AttendanceRequest;
 use App\Models\User;
+use App\Models\AttendanceCorrectionRequest;
 
 class Attendance extends Model
 {
@@ -41,6 +42,11 @@ class Attendance extends Model
     public function attendanceBreaks()
     {
         return $this->hasMany(AttendanceBreak::class);
+    }
+
+    public function correctionRequests()
+    {
+        return $this->hasMany(AttendanceCorrectionRequest::class);
     }
 
     public function requests()

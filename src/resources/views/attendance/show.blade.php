@@ -85,12 +85,12 @@
                 </div>
         </div>
         @if (!$attendance->is_edited)
+            <p class="btn-text">※承認待ちのため修正はできません</p>
+        @else
             <div class="button-group">
                 <button type="submit" class="btn btn-primary">修正</button>
             </div>
-            </form>
-        @else
-            <p class="btn-text">※承認待ちのため修正はできません</p>
         @endif
+        </form>
     </div>
 @endsection

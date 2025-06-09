@@ -1,30 +1,105 @@
+body {
+    background: #F0EFF2;
+}
+
 .attendance-staff {
-    padding: 2rem;
+    max-width: none;
+    height: auto;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    margin: 30px auto;
 }
-.attendance-staff__title {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
+
+.attendance__staff-line {
+    width: 40px;
+    border: 1px solid #000000;
+    background: #000000;
+    margin: 0 20px 0 0;
 }
+
 .attendance-staff__nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1rem;
+    border: 1px solid #FFFFFF;
+    background: #FFFFFF;
+    width: 900px;
+    height: 60px;
+    border-radius: 10px;
+    margin: 20px 0;
 }
+
+.calendar-icon {
+    width: 25px;
+    height: 25px;
+    margin: 0 10px;
+}
+
+.icon {
+    width: 20px;
+    height: 15px;
+    margin: 0 10px 0 20px;
+    color: #737373;
+}
+
 .attendance-staff__nav-link {
-    color: #007bff;
-    text-decoration: none;
+    font-family: Inter;
+    font-weight: 700;
+    font-size: 16px;
+    color: #737373;
 }
+
 .attendance-staff__month {
-    font-weight: bold;
+    font-family: Inter;
+    font-weight: 700;
+    font-size: 20px;
+    color: #000000;
 }
+
 .attendance-staff__table {
-    width: 100%;
-    border-collapse: collapse;
+    width: 900px;
+    height: 31px;
+    border: 1px solid #E1E1E1;
+    border: none;
+    border-radius: 10px;
+    background: #FFFFFF;
+    margin-top: 20px;
 }
-.attendance-staff__table th,
-.attendance-staff__table td {
-    border: 1px solid #ddd;
-    padding: 0.5rem;
+
+.attendance__table-header {
+    width: 900px;
+    height: 40px;
+    color: #737373;
+    border-bottom: 3px solid #E1E1E1;
+}
+
+th {
+    font-family: Inter;
+    font-weight: 700;
+    font-size: 16px;
     text-align: center;
+}
+
+.attendance__table-row {
+    width: 900px;
+    height: 40px;
+    margin: 5px 0;
+    border-top: 2px solid #E1E1E1;
+    border-left: none;
+    border-right: none;
+    color: #737373;
+}
+
+td {
+    text-align: center;
+    width: 900px;
+    height: 33px;
+}
+
+.attendance__detail-link {
+    font-family: Inter;
+    font-weight: 700;
+    font-size: 16px;
+    color: #000000;
 }

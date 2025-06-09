@@ -58,7 +58,7 @@
                             <td>{{ \Carbon\Carbon::parse($request['requested_at'])->format('Y/m/d') }}</td>
                             <td>
                                 @if ($isAdmin)
-                                    <a href="{{ route('stamp_correction_request.approve.show', ['attendanceCorrectionRequest' => $request['id']]) }}"
+                                    <a href="{{ route('admin.stamp_correction_request.approve.show', ['attendanceCorrectionRequest' => $request['id']]) }}"
                                         class="attendance__detail-link">詳細</a>
 
                                 @else

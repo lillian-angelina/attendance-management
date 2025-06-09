@@ -42,10 +42,10 @@ Route::get('/stamp_correction_request/list', [StampCorrectionRequestController::
 Route::post('/stamp_correction_request/store', [StampCorrectionRequestController::class, 'store'])->name('stamp_correction_request.store');
 
 // 管理者
-Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
-    Route::get('/stamp_correction_request/list', [AdminStampCorrectionRequestController::class, 'index'])->name('admin.stamp_correction_request.index');
+Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(function () {
+    Route::get('/stamp_correction_request/list', [AdminStampCorrectionRequestController::class, 'index'])->name('stamp_correction_request.index');
     Route::get('/stamp_correction_request/approve/{attendanceCorrectionRequest}', [AdminStampCorrectionRequestController::class, 'showApprove'])->name('stamp_correction_request.approve.show');
-    Route::post('/stamp_correction_request/approve/{attendanceCorrectionRequest}', [AdminStampCorrectionRequestController::class, 'approve'])->name('admin.stamp_correction_request.approve');
+    Route::post('/stamp_correction_request/approve/{attendanceCorrectionRequest}', [AdminStampCorrectionRequestController::class, 'approve'])->name('stamp_correction_request.approve');
 });
 
 Route::get('/attendance/{attendance}', [AttendanceController::class, 'show'])->name('attendance.show');
