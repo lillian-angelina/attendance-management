@@ -39,6 +39,7 @@ class StampCorrectionRequestController extends Controller
 
         return view('stamp_correction_request.index', [
             'layout' => $layout,
+            'layoutView' => $layout,
             'requests' => $requests,
             'isAdmin' => $isAdmin,
         ]);

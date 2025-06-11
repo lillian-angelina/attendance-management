@@ -8,8 +8,7 @@ class AdminAttendanceCorrectionApproveRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        // 管理者だけ承認可能
-        return auth()->check() && auth()->user()->is_admin;
+        return true;
     }
 
     public function rules(): array

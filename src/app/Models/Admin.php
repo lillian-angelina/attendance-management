@@ -16,10 +16,16 @@ class Admin extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
     ];
+
+    public function isAdmin(): bool
+    {
+        return true;
+    }
 }

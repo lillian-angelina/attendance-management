@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Attendance;
 use App\Models\AttendanceBreak;
+use App\Models\AttendanceCorrectionRequest;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -55,7 +56,7 @@ class AttendanceSeeder extends Seeder
         ];
 
         $daysAdded = 0;
-        $date = Carbon::create(2023, 6, 1); // 初期日付（固定）
+        $date = Carbon::create(2025, 6, 1); // 初期日付（固定）
 
         while ($daysAdded < 40) {
             if ($date->isSaturday() || $date->isSunday()) {
@@ -92,6 +93,16 @@ class AttendanceSeeder extends Seeder
                 'attendance_id' => $attendance->id,
                 'rest_start_time' => $breakStart->format('H:i'),
                 'rest_end_time' => $breakEnd->format('H:i'),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            AttendanceCorrectionRequest::create([
+                'attendance_id' => $attendance->id,
+                'user_id' => $user->id,
+                'status' => $attendance->status,
+                'target_date' => $attendance->target_date,
+                'reason' => $attendance->reason,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

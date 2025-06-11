@@ -15,6 +15,7 @@ class AttendanceCorrectionRequest extends Model
         'user_id',
         'attendance_id',
         'date',
+        'is_edited',
         'name',
         'requested_at',
     ];

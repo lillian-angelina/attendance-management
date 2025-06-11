@@ -1,9 +1,9 @@
 {{-- resources/views/stamp_correction_request/index.blade.php --}}
 @php
-    $layoutView = $layout === 'layouts.admin' ? 'layouts.admin' : 'layouts.app';
+    $layout = $isAdmin ? 'layouts.admin' : 'layouts.app';
 @endphp
 
-@extends($layoutView)
+@extends($layout)
 
 @section('title')
     <title>申請一覧</title>
@@ -47,27 +47,33 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($requests as $request)
-                    @if($isAdmin || auth()->id() === $request->user_id)
+                @foreach($requests as $attendanceRequest)
+
                         <tr class="attendance__table-row">
-                            <td>{{ $request['status'] === 'pending' ? '承認待ち' : ($request['status'] === 'approved' ? '承認済み' : 'その他') }}
+                            <td>{{ $attendanceRequest['status'] === 'pending' ? '承認待ち' : ($attendanceRequest['status'] === 'approved' ? '承認済み' : 'その他') }}
                             </td>
-                            <td>{{ $request->user->name ?? '不明' }}</td>
-                            <td>{{ \Carbon\Carbon::parse($request['target_date'])->format('Y/m/d') }}</td>
-                            <td>{{ $request['reason'] }}</td>
-                            <td>{{ \Carbon\Carbon::parse($request['requested_at'])->format('Y/m/d') }}</td>
+                            <td>{{ $attendanceRequest->user->name ?? '不明' }}</td>
+                            <td>{{ \Carbon\Carbon::parse($attendanceRequest['target_date'])->format('Y/m/d') }}</td>
+                            <td>{{ $attendanceRequest['reason'] }}</td>
+                            <td>{{ \Carbon\Carbon::parse($attendanceRequest['requested_at'])->format('Y/m/d') }}</td>
                             <td>
                                 @if ($isAdmin)
-                                    <a href="{{ route('admin.stamp_correction_request.approve.show', ['attendanceCorrectionRequest' => $request['id']]) }}"
-                                        class="attendance__detail-link">詳細</a>
-
+                                            <a href="{{ route('stamp_correction_request.approve.show', [
+                                        'attendanceCorrectionRequest' => $attendanceRequest['id'],
+                                        'attendance' => $attendanceRequest['id'],
+                                        'reason' => $attendanceRequest['reason'],
+                                        'target_date' => $attendanceRequest['target_date']
+                                    ]) }}" class="attendance__detail-link">詳細</a>
                                 @else
-                                    <a href="{{ route('attendance.show', ['attendance' => $request['id'], 'reason' => $request['reason'], 'target_date' => $request['target_date']]) }}"
-                                        class="attendance__detail-link">詳細</a>
+                                            <a href="{{ route('attendance.show', [
+                                        'attendance' => $attendanceRequest['id'],
+                                        'reason' => $attendanceRequest['reason'],
+                                        'target_date' => $attendanceRequest['target_date']
+                                    ]) }}" class="attendance__detail-link">詳細</a>
                                 @endif
                             </td>
                         </tr>
-                    @endif
+
                 @endforeach
             </tbody>
         </table>

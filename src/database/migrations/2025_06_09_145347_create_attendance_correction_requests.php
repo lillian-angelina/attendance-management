@@ -14,12 +14,13 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('attendance_id')->constrained('attendances')->onDelete('cascade');
-            $table->foreignId('admin_id')->constrained()->onDelete('cascade');
             $table->date('date')->nullable();
             $table->string('status')->default('pending');
             $table->string('reason')->nullable();
             $table->dateTime('work_start')->nullable();
             $table->dateTime('work_end')->nullable();
+            $table->string('target_date')->nullable();
+            $table->boolean('is_edited')->default(false);
             $table->timestamp('requested_at')->nullable();
             $table->timestamps();
         });

@@ -12,13 +12,12 @@ body {
     margin: 0 auto;
 }
 
-.stamp-correction-list {
-    max-width: none;
-    height: auto;
-    display: grid;
-    justify-content: center;
+.content {
+    display: block;
     align-items: center;
-    margin: 30px auto;
+    width: 900px;
+    height: auto;
+    margin: 0 auto;
 }
 
 .attendance__title-line {
@@ -33,7 +32,7 @@ body {
     background: #F0EFF2;
     width: 900px;
     height: 60px;
-    margin: 20px 25%;
+    margin: 20px 0;
 }
 
 .attendance-detail__group {
@@ -55,7 +54,7 @@ body {
     border-bottom: 2px solid #E1E1E1;
 }
 
-.form-group-note {
+.form-group-reason {
     display: flex;
     justify-content: start;
     align-items: center;
@@ -67,7 +66,7 @@ body {
 .attendance-detail__ymd,
 .form__work-start,
 .form__break-time,
-.form__note {
+.form__reason {
     margin: 0 20px 0 50px;
     font-family: Inter;
     font-weight: 700;
@@ -121,7 +120,7 @@ body {
 }
 
 .form__break-time__input-start,
-.form__note__textarea {
+.form__reason__textarea {
     margin: 0 80px 0 230px;
 }
 
@@ -129,7 +128,7 @@ body {
     margin: 0 80px 0 222px;
 }
 
-.form__note__textarea {
+.form__reason__textarea {
     padding: 10px;
     font-weight: 700;
     font-size: 14px;

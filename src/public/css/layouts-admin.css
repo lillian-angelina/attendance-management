@@ -5,6 +5,7 @@ body {
 
 .header {
     max-width: none;
+    width: auto;
     height: 80px;
     background-color: black;
     display: flex;
