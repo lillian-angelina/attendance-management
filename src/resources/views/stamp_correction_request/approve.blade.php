@@ -59,39 +59,48 @@
                             value="{{ optional($attendance->breaks->last())->rest_end_time ? \Carbon\Carbon::parse($attendance->breaks->last()->rest_end_time)->format('H:i') : '' }}">
                     </div>
 
-                    @foreach ($attendance->breaks as $break)
+                    @if ($attendance->breaks->count() < 2)
                         <div class="form-group">
-                            <label class="form__break-time" for="break_time_{{ $loop->index }}">
-                                休憩{{ $loop->iteration + 1 }}
-                            </label>
-                            <input class="form__break-time__input-start2" type="time" name="break_time[]"
-                                id="break_time_{{ $loop->index }}"
-                                value="{{ \Carbon\Carbon::parse($break->rest_start_time)->format('H:i') }}">
-                            <label class="form__break-time_end" for="break-time_end">～</label>
-                            <input class="form__break-time__input-end" type="time" name="break_time" id="break_time"
-                                value="{{ optional($attendance->breaks->last())->rest_end_time ? \Carbon\Carbon::parse($attendance->breaks->last()->rest_end_time)->format('H:i') : '' }}">
+                            <label class="form__break-time" for="break_start_1">休憩2</label>
+                            <input class="form__break-time__input-start2" type="time" name="break_start_times[]"
+                                id="break_start_1" value="00:00">
+                            <label class="form__break-time_end" for="break_end_1">～</label>
+                            <input class="form__break-time__input-end" type="time" name="break_end_times[]" id="break_end_1"
+                                value="00:00">
                         </div>
-                    @endforeach
-                </form>
-                <div class="form-group-reason">
-                    <label class="form__reason" for="reason">備考</label>
-                    <textarea class="form__reason__textarea" name="reason" id="reason" class="form-control"
-                        rows="4">{{ old('reason', $correctionReason ?? $attendance->reason) }}</textarea>
-                </div>
-                @if($attendanceCorrectionRequest->status !== 'approved')
-                    <div class="button-group">
-                        <form method="POST"
-                            action="{{ route('stamp_correction_request.update', ['attendanceCorrectionRequest' => $attendanceCorrectionRequest->id]) }}">
-                            @csrf
-                            <button type="submit" class="btn">承認</button>
-                        </form>
-                    </div>
-                @else
-                    <div class="button-group">
-                        <p class="btn-text">承認済み</p>
-                    </div>
-                @endif
+                    @else
+                        @foreach ($attendance->breaks as $index => $break)
+                            <div class="form-group">
+                                <label class="form__break-time" for="break_start_{{ $index }}">
+                                    休憩{{ $loop->iteration + 1 }}
+                                </label>
+                                <input class="form__break-time__input-start2" type="time" name="break_start_times[]"
+                                    id="break_start_{{ $index }}"
+                                    value="{{ \Carbon\Carbon::parse($break->rest_start_time)->format('H:i') }}">
+                                <label class="form__break-time_end" for="break_end_{{ $index }}">～</label>
+                                <input class="form__break-time__input-end" type="time" name="break_end_times[]"
+                                    id="break_end_{{ $index }}"
+                                    value="{{ \Carbon\Carbon::parse($break->rest_end_time)->format('H:i') }}">
+                            </div>
+                        @endforeach
+                    @endif
 
+                    <div class="form-group-reason">
+                        <label class="form__reason" for="reason">備考</label>
+                        <textarea class="form__reason__textarea" name="reason" id="reason" class="form-control"
+                            rows="4">{{ old('reason', $correctionReason ?? $attendance->reason) }}</textarea>
+                    </div>
+
+                    @if($attendanceCorrectionRequest->status !== 'approved')
+                        <div class="button-group">
+                            <button type="submit" class="btn">承認</button>
+                        </div>
+                    @else
+                        <div class="button-group">
+                            <p class="btn-text">承認済み</p>
+                        </div>
+                    @endif
+                </form>
             </div>
         </div>
     </div>
