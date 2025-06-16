@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Attendance;
 use Illuminate\Routing\Controller;
 use Carbon\Carbon;
+use App\Http\Requests\LoginRequest;
 
 class AdminAuthController extends Controller
 {
@@ -47,18 +48,16 @@ class AdminAuthController extends Controller
         return view('admin.auth.login');
     }
 
-    public function login(Request $request)
+    public function login(LoginRequest $request)
     {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+        $credentials = $request->only('email', 'password');
 
         if (Auth::guard('admin')->attempt($credentials)) {
             $request->session()->regenerate();
             return redirect()->intended('/admin/attendance/list');
         }
-
-        return back()->with('error', 'メールアドレスまたはパスワードが正しくありません');
+        return back()->withErrors([
+            'login_error' => 'ログイン情報が登録されていません。',
+        ])->withInput();
     }
 }

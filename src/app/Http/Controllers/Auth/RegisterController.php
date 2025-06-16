@@ -4,10 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\RegisterRequest;
 
 class RegisterController extends Controller
 {
@@ -16,24 +13,19 @@ class RegisterController extends Controller
         return view('auth.register'); // resources/views/auth/register.blade.php
     }
 
-    public function register(Request $request)
+    public function register(RegisterRequest $request)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:users,email'],
-            'password' => ['required', 'confirmed', 'min:8'],
+        // バリデーション済みデータの取得
+        $validated = $request->validated();
+
+        // ユーザー登録処理
+        User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => bcrypt($validated['password']),
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-        event(new Registered($user)); // メール認証イベント発火
-
-        Auth::login($user);
-
-        return redirect()->route('verification.notice');
+        // ログイン後のリダイレクト等
+        return redirect()->route('dashboard')->with('success', '登録が完了しました。');
     }
 }

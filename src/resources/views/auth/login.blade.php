@@ -14,6 +14,7 @@
         <div class="login-title">
             <p>ログイン</p>
         </div>
+
         <form action="{{ url('login') }}" method="POST">
             @csrf
             <div class="form-group">
@@ -23,6 +24,11 @@
                     <div class="text-danger">{{ $message }}</div>
                 @enderror
             </div>
+            @if ($errors->has('login_error'))
+                <div class="text-danger">
+                    {{ $errors->first('login_error') }}
+                </div>
+            @endif
 
             <div class="form-group">
                 <label for="password">パスワード</label>

@@ -166,3 +166,9 @@ body {
     text-align: end;
     color: red;
 }
+
+.error-message {
+    display: flex;
+    color: red;
+    margin-top: 4px;
+}

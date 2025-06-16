@@ -56,7 +56,7 @@ class AttendanceSeeder extends Seeder
         ];
 
         $daysAdded = 0;
-        $date = Carbon::create(2025, 6, 1); // 初期日付（固定）
+        $date = Carbon::create(2025, 4, 1); // 初期日付（固定）
 
         while ($daysAdded < 40) {
             if ($date->isSaturday() || $date->isSunday()) {

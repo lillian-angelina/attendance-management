@@ -9,6 +9,7 @@ use Illuminate\Routing\Controller;
 use App\Models\User;
 use Carbon\Carbon;
 use App\Services\AttendanceService;
+use App\Http\Requests\AttendanceUpdateRequest;
 
 class AttendanceController extends Controller
 {
@@ -180,6 +181,7 @@ class AttendanceController extends Controller
         $weekday = $today->isoFormat('dddd');
 
         return view('attendance.create', [
+            'lastRest' => $lastRest,
             'status' => $status,
             'today' => $today->format('Y年m月d日'),
             'weekday' => $weekday,
@@ -254,7 +256,7 @@ class AttendanceController extends Controller
         return redirect()->back();
     }
 
-    public function update(Request $request, Attendance $attendance)
+    public function update(AttendanceUpdateRequest $request, Attendance $attendance)
     {
         $request->validate([
             'work_start' => 'nullable|date_format:H:i',

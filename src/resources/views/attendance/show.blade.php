@@ -50,19 +50,35 @@
                     <div class="form-group">
                         <label class="form__work-start" for="work_start">出勤・退勤</label>
                         <input class="form__work-start__input" type="time" name="work_start" id="work_start"
-                            value="{{ \Carbon\Carbon::parse($attendance->work_start)->format('H:i') }}">
+                            value="{{ old('work_end', \Carbon\Carbon::parse($attendance->work_start)->format('H:i')) }}">
+                        @error('work_start')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+
                         <label class="form__work-end" for="work_end">～</label>
                         <input class="form__work-end__input" type="time" name="work_end" id="work_end"
-                            value="{{ \Carbon\Carbon::parse($attendance->work_end)->format('H:i') }}">
+                            value="{{ old('work_end', \Carbon\Carbon::parse($attendance->work_end)->format('H:i')) }}">
+                        @error('work_end')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="form-group">
-                        <label class="form__break-time" for="break_time">休憩</label>
-                        <input class="form__break-time__input-start" type="time" name="break_time" id="break_time"
-                            value="{{ optional($attendance->breaks->first())->rest_start_time ? \Carbon\Carbon::parse($attendance->breaks->first()->rest_start_time)->format('H:i') : '' }}">
-                        <label class="form__break-time_end" for="break-time_end">～</label>
-                        <input class="form__break-time__input-end" type="time" name="break_time" id="break_time"
-                            value="{{ optional($attendance->breaks->last())->rest_end_time ? \Carbon\Carbon::parse($attendance->breaks->last()->rest_end_time)->format('H:i') : '' }}">
+                        <label class="form__break-time" for="break_start_times_0">休憩</label>
+                        <input class="form__break-time__input-start" type="time" name="break_start_times[]"
+                            id="break_start_times_0"
+                            value="{{ old('break_start_times.0', optional($attendance->breaks->get(0))->rest_start_time ? \Carbon\Carbon::parse($attendance->breaks->get(0)->rest_start_time)->format('H:i') : '') }}">
+                        @error('break_start_times.0')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+
+                        <label class="form__break-time_end" for="break_end_times_0">～</label>
+                        <input class="form__break-time__input-end" type="time" name="break_end_times[]"
+                            id="break_end_times_0"
+                            value="{{ old('break_end_times.0', optional($attendance->breaks->get(0))->rest_end_time ? \Carbon\Carbon::parse($attendance->breaks->get(0)->rest_end_time)->format('H:i') : '') }}">
+                        @error('break_end_times.0')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     @if ($attendance->breaks->count() < 2)
@@ -83,10 +99,17 @@
                                 <input class="form__break-time__input-start2" type="time" name="break_start_times[]"
                                     id="break_start_{{ $index }}"
                                     value="{{ \Carbon\Carbon::parse($break->rest_start_time)->format('H:i') }}">
+                                @error("break_start_times.$index")
+                                    <div class="error-message">{{ $message }}</div>
+                                @enderror
+                                
                                 <label class="form__break-time_end" for="break_end_{{ $index }}">～</label>
                                 <input class="form__break-time__input-end" type="time" name="break_end_times[]"
                                     id="break_end_{{ $index }}"
                                     value="{{ \Carbon\Carbon::parse($break->rest_end_time)->format('H:i') }}">
+                                @error("break_end_times.$index")
+                                    <div class="error-message">{{ $message }}</div>
+                                @enderror
                             </div>
                         @endforeach
                     @endif
@@ -96,6 +119,9 @@
                         <textarea class="form__reason__textarea" name="reason" id="reason"
                             rows="4">{{ old('reason', $correctionReason ?? '') }}</textarea>
                     </div>
+                    @error('reason')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
             </div>
             @if (!$attendance->is_edited)
                 <div class="button-group">

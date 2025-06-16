@@ -10,37 +10,37 @@
 @endsection
 
 @section('content')
-<div class="admin-login">
-    <h1 class="admin-login__title">管理者ログイン</h1>
+    <div class="admin-login">
+        <h1 class="admin-login__title">管理者ログイン</h1>
 
-    @if(session('error'))
-        <div class="admin-login__error">
-            {{ session('error') }}
-        </div>
-    @endif
+        <form method="POST" action="{{ route('admin.auth.login') }}" class="admin-login__form">
+            @csrf
 
-    <form method="POST" action="{{ route('admin.auth.login') }}" class="admin-login__form">
-        @csrf
+            <div class="admin-login__field">
+                <label for="email">メールアドレス</label>
+                <input type="email" id="email" name="email" value="{{ old('email') }}">
+                @error('email')
+                    <div class="admin-login__error">{{ $message }}</div>
+                @enderror
+            </div>
 
-        <div class="admin-login__field">
-            <label for="email">メールアドレス</label>
-            <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus>
-            @error('email')
-                <div class="admin-login__error">{{ $message }}</div>
-            @enderror
-        </div>
+            <div class="admin-login__field">
+                <label for="password">パスワード</label>
+                <input type="password" id="password" name="password">
+                @error('password')
+                    <div class="admin-login__error">{{ $message }}</div>
+                @enderror
+            </div>
 
-        <div class="admin-login__field">
-            <label for="password">パスワード</label>
-            <input type="password" id="password" name="password" required>
-            @error('password')
-                <div class="admin-login__error">{{ $message }}</div>
-            @enderror
-        </div>
+            @if ($errors->has('login_error'))
+                <div class="admin-login__error">
+                    {{ $errors->first('login_error') }}
+                </div>
+            @endif
 
-        <div class="admin-login__actions">
-            <button type="submit" class="admin-login__btn">管理者ログインする</button>
-        </div>
-    </form>
-</div>
+            <div class="admin-login__actions">
+                <button type="submit" class="admin-login__btn">管理者ログインする</button>
+            </div>
+        </form>
+    </div>
 @endsection
