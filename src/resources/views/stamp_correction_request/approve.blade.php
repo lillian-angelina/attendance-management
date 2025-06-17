@@ -45,13 +45,14 @@
                         <label class="form__work-start" for="work_start">出勤・退勤</label>
                         <input class="form__work-start__input" type="time" name="work_start" id="work_start"
                             value="{{ optional($attendance->work_start) ? \Carbon\Carbon::parse($attendance->work_start)->format('H:i') : '' }}">
+                        @error('work_start')
+                            <div class="error-message">{{ $message }}</div>
+                        @enderror
+
                         <label class="form__work-end" for="work_end">～</label>
                         <input class="form__work-end__input" type="time" name="work_end" id="work_end"
                             value="{{ optional($attendance->work_end) ? \Carbon\Carbon::parse($attendance->work_end)->format('H:i') : '' }}">
                     </div>
-                    @error('work_start')
-                        <div class="error-message">{{ $message }}</div>
-                    @enderror
 
                     <div class="form-group">
                         <label class="form__break-time" for="break_time">休憩</label>
@@ -112,13 +113,13 @@
                         <div class="error-message">{{ $message }}</div>
                     @enderror
 
-                    @if($attendanceCorrectionRequest->status !== 'approved')
+                    @if($attendanceCorrectionRequest->is_edited)
                         <div class="button-group">
-                            <button type="submit" class="btn">承認</button>
+                            <p class="btn-text">承認済み</p>
                         </div>
                     @else
                         <div class="button-group">
-                            <p class="btn-text">承認済み</p>
+                            <button type="submit" class="btn">承認</button>
                         </div>
                     @endif
                 </form>

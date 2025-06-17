@@ -17,7 +17,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 // 会員登録
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [RegisterController::class, 'register']);
+Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
 
 // メール認証
 Route::get('/email/verify', [VerificationController::class, 'notice'])->name('verification.notice');

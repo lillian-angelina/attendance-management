@@ -17,10 +17,10 @@ class AdminAttendanceCorrectionApproveRequest extends FormRequest
     {
         return [
             'work_start' => ['required', 'date_format:H:i'],
-            'work_end' => ['required', 'date_format:H:i'],
-            'break_times' => ['nullable', 'array'],
+            'work_end' => ['required', 'date_format:H:i', 'after:work_start'],
             'break_start_times.*' => ['nullable', 'date_format:H:i'],
             'break_end_times.*' => ['nullable', 'date_format:H:i'],
+            'break_times' => ['nullable', 'array'],
             'reason' => ['required', 'string'],
             'reviewed_at' => ['nullable', 'date'],
         ];
@@ -44,31 +44,53 @@ class AdminAttendanceCorrectionApproveRequest extends FormRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function ($validator) {
-            $workStart = Carbon::createFromFormat('H:i', $this->input('work_start'));
-            $workEnd = Carbon::createFromFormat('H:i', $this->input('work_end'));
+            try {
+                $workStart = Carbon::createFromFormat('H:i', $this->input('work_start'));
+                $workEnd = Carbon::createFromFormat('H:i', $this->input('work_end'));
+            } catch (\Exception $e) {
+                // 時刻形式が不正な場合も休憩チェックをスキップ
+                return;
+            }
 
             if ($workStart >= $workEnd) {
                 $validator->errors()->add('work_start', '出勤時間もしくは退勤時間が不適切な値です');
                 $validator->errors()->add('work_end', '出勤時間もしくは退勤時間が不適切な値です');
+                return; // 🚨 ここで休憩バリデーションを中断
             }
 
-            $breakStarts = $this->input('break_start_times', []);
-            $breakEnds = $this->input('break_end_times', []);
+            $startTimes = $this->input('break_start_times', []);
+            $endTimes = $this->input('break_end_times', []);
 
-            foreach ($breakStarts as $index => $start) {
-                if ($start) {
-                    $breakStart = Carbon::createFromFormat('H:i', $start);
-                    if ($breakStart > $workEnd) {
+            foreach ($startTimes as $index => $start) {
+                if ($start && ($end = $endTimes[$index] ?? null)) {
+                    if ($start > $end) {
                         $validator->errors()->add("break_start_times.$index", '出勤時間もしくは退勤時間が不適切な値です');
                     }
                 }
             }
 
-            foreach ($breakEnds as $index => $end) {
+            foreach ($startTimes as $index => $start) {
+                if ($start) {
+                    try {
+                        $breakStart = Carbon::createFromFormat('H:i', $start);
+                        if ($breakStart > $workEnd) {
+                            $validator->errors()->add("break_start_times.$index", '出勤時間もしくは退勤時間が不適切な値です');
+                        }
+                    } catch (\Exception $e) {
+                        // 時刻形式不正はrulesでカバー済み
+                    }
+                }
+            }
+
+            foreach ($endTimes as $index => $end) {
                 if ($end) {
-                    $breakEnd = Carbon::createFromFormat('H:i', $end);
-                    if ($breakEnd > $workEnd) {
-                        $validator->errors()->add("break_end_times.$index", '出勤時間もしくは退勤時間が不適切な値です');
+                    try {
+                        $breakEnd = Carbon::createFromFormat('H:i', $end);
+                        if ($breakEnd > $workEnd) {
+                            $validator->errors()->add("break_end_times.$index", '出勤時間もしくは退勤時間が不適切な値です');
+                        }
+                    } catch (\Exception $e) {
+                        // 時刻形式不正はrulesでカバー済み
                     }
                 }
             }

@@ -106,7 +106,7 @@ class AdminStampCorrectionRequestController extends Controller
             ]);
         }
 
-        return redirect()->route('stamp_correction_request.index')
-            ->with('success', '申請を承認しました。');
+        return redirect()->route('stamp_correction_request.approve', $attendanceCorrectionRequest->id)
+            ->with('status', 'edited');
     }
 }

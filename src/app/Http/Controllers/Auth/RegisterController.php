@@ -26,6 +26,6 @@ class RegisterController extends Controller
         ]);
 
         // ログイン後のリダイレクト等
-        return redirect()->route('dashboard')->with('success', '登録が完了しました。');
+        return redirect()->route('login')->with('success', '登録が完了しました。');
     }
 }
