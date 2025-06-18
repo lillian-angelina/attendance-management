@@ -44,7 +44,7 @@ class AttendanceController extends Controller
         // 出勤データ取得（該当月）
         $attendances = Attendance::with(['user', 'attendanceBreaks', 'breaks'])
             ->where('user_id', $user->id)
-            ->whereBetween('work_start', [$startDate, $endDate])
+            ->whereBetween('work_date', [$startDate->toDateString(), $endDate->toDateString()])
             ->get()
             ->map(function ($attendance) use ($attendanceService) {
                 $date = $attendance->work_date ? Carbon::parse($attendance->work_date) : null;
@@ -57,7 +57,7 @@ class AttendanceController extends Controller
                 return [
                     'id' => $attendance->id,
                     'work_date' => $date ? $date->format('Y-m-d') : '',
-                    'day' => $start ? $start->isoFormat('dd') : '',
+                    'day' => $date ? $date->isoFormat('dd') : '',
                     'work_start' => $start ? $start->format('H:i') : '—',
                     'work_end' => $end ? $end->format('H:i') : '—',
                     'break_time' => gmdate('H:i', $totalBreak * 60),
