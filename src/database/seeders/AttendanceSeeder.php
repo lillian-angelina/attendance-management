@@ -84,7 +84,6 @@ class AttendanceSeeder extends Seeder
                 'total_time' => $totalMinutes,                   // int
                 'status' => $statusOptions[array_rand($statusOptions)],
                 'target_date' => $date->toDateString(), // 任意の用途に使用
-                'reason' => $reasons[array_rand($reasons)],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -102,7 +101,7 @@ class AttendanceSeeder extends Seeder
                 'user_id' => $user->id,
                 'status' => $attendance->status,
                 'target_date' => $attendance->target_date,
-                'reason' => $attendance->reason,
+                'reason' => $reasons[array_rand($reasons)],
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

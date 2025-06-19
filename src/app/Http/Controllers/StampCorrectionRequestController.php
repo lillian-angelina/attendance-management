@@ -10,8 +10,7 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Routing\Controller;
 use App\Models\Attendance;
-
-
+use App\Models\AttendanceCorrectionRequest;
 
 class StampCorrectionRequestController extends Controller
 {
@@ -27,12 +26,15 @@ class StampCorrectionRequestController extends Controller
         // ステータス絞り込み（例: pending / approved）
         $status = $request->input('status', 'pending');
 
-        // クエリビルダー
-        $query = Attendance::with('user')->where('status', $status);
+        // AttendanceCorrectionRequest から取得
+        $query = AttendanceCorrectionRequest::with(['attendance.user'])
+            ->where('status', $status);
 
-        // 管理者でなければ、自分のデータのみに絞る
+        // 管理者でなければ、自分の申請のみに絞る
         if (!$isAdmin) {
-            $query->where('user_id', $user->id);
+            $query->whereHas('attendance', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            });
         }
 
         $requests = $query->get();

@@ -10,6 +10,8 @@ use App\Models\User;
 use Carbon\Carbon;
 use App\Services\AttendanceService;
 use App\Http\Requests\AttendanceUpdateRequest;
+use App\Models\AttendanceCorrectionRequest;
+use Illuminate\Support\Facades\DB;
 
 class AttendanceController extends Controller
 {
@@ -80,20 +82,18 @@ class AttendanceController extends Controller
         $workingMinutes = $attendanceService->calculateWorkingTime($attendance);
         $layout = auth('admin')->check() ? 'layouts.admin' : 'layouts.app';
 
-        // 申請理由取得
-        $reasonFromUrl = request()->query('reason');
-        $correctionRequest = \App\Models\Attendance::where('user_id', $attendance->user_id)
-            ->whereDate('target_date', $attendance->work_date)
+        // 修正申請（承認待ち）を取得
+        $correctionRequest = AttendanceCorrectionRequest::where('attendance_id', $attendance->id)
+            ->where('status', 'pending')
             ->latest()
             ->first();
-        $correctionReason = $reasonFromUrl ?? optional($correctionRequest)->reason;
 
-        $targetDate = request()->query('target_date');
-        if ($targetDate) {
-            $carbonDate = \Carbon\Carbon::parse($targetDate);
-        } else {
-            $carbonDate = \Carbon\Carbon::parse($attendance->work_start);
-        }
+        // 備考（修正申請があればそれを使用）
+        $correctionReason = optional($correctionRequest)->reason ?? $attendance->correction_reason ?? '';
+
+        // 表示日付
+        $dateSource = $attendance->work_date ?? $attendance->work_start ?? now();
+        $carbonDate = \Carbon\Carbon::parse($dateSource);
 
         $year = $carbonDate->format('Y年');
         $monthDay = $carbonDate->format('m月d日');
@@ -102,6 +102,7 @@ class AttendanceController extends Controller
             'attendance' => $attendance,
             'layout' => $layout,
             'workingMinutes' => $workingMinutes,
+            'correctionRequest' => $correctionRequest,
             'correctionReason' => $correctionReason,
             'year' => $year,
             'monthDay' => $monthDay,
@@ -261,33 +262,39 @@ class AttendanceController extends Controller
         $request->validate([
             'work_start' => 'nullable|date_format:H:i',
             'work_end' => 'nullable|date_format:H:i|after:work_start',
+            'reason' => 'required|string|max:255',
+            'break_start_times.*' => 'nullable|date_format:H:i',
+            'break_end_times.*' => 'nullable|date_format:H:i|after_or_equal:break_start_times.*',
         ]);
 
-        // 勤怠情報を更新
-        $attendance->work_start = $request->input('work_start');
-        $attendance->work_end = $request->input('work_end');
-        $attendance->reason = $request->input('reason');
-        $attendance->status = 'pending';
-        $attendance->requested_at = now();
-        $attendance->is_edited = true; // 修正済みフラグ
-        $attendance->work_start = Carbon::createFromFormat('H:i', $request->input('work_start'));
-        $attendance->work_end = Carbon::createFromFormat('H:i', $request->input('work_end'));
+        DB::beginTransaction();
 
-        // 総労働時間を再計算（nullでないときだけ）
-        if ($attendance->work_start && $attendance->work_end) {
-            $workStart = Carbon::parse($attendance->work_start);
-            $workEnd = Carbon::parse($attendance->work_end);
-            $breakTime = $attendance->break_time ?? 0;
+        try {
+            // 勤怠情報にステータスだけ反映
+            $attendance->status = 'pending';
+            $attendance->is_edited = true;
+            $attendance->requested_at = now();
+            $attendance->save();
 
-            $totalTime = $workStart->diffInMinutes($workEnd);
-            $attendance->total_time = max($totalTime - $breakTime, 0); // マイナス防止
-        } else {
-            $attendance->total_time = null; // 不明な場合は null
+            // 修正申請として保存（承認待ち一覧に出すため）
+            AttendanceCorrectionRequest::create([
+                'attendance_id' => $attendance->id,
+                'user_id' => auth()->id(),
+                'work_start' => $request->input('work_start'),
+                'work_end' => $request->input('work_end'),
+                'break_start_times' => json_encode($request->input('break_start_times', [])),
+                'break_end_times' => json_encode($request->input('break_end_times', [])),
+                'reason' => $request->input('reason'),
+                'status' => 'pending',
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('attendance.show', ['attendance' => $attendance->id])
+                ->with('status', '修正申請を提出しました');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->withErrors(['error' => '申請の保存に失敗しました。もう一度お試しください。']);
         }
-
-        $attendance->save();
-
-        return redirect()->route('attendance.show', ['attendance' => $attendance->id])
-            ->with('status', 'edited');
     }
 }

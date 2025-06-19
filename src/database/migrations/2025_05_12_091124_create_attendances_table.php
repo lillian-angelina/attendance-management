@@ -15,7 +15,6 @@ return new class extends Migration {
             $table->foreignId('user_id')->constrained()->onDelete('cascade'); // ユーザーに紐づく
             $table->dateTime('work_start');     // 出勤時間
             $table->dateTime('work_end')->nullable();       // 退勤時間
-            $table->string('reason')->nullable();             // 修正理由
             $table->date('work_date');         // 勤務日
             $table->integer('break_time')->nullable();        // 勤務時間
             $table->integer('total_time')->nullable();        // 勤務時間（分など数値で保存推奨）

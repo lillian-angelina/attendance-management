@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\AttendanceBreak;
-use App\Models\AttendanceRequest;
 use App\Models\User;
 use App\Models\AttendanceCorrectionRequest;
 
@@ -17,13 +16,11 @@ class Attendance extends Model
         'user_id',
         'work_start',
         'work_end',
-        'note',
         'work_date',
         'break_time',
         'total_time',
         'is_edited',
         'status',
-        'reason',
         'requested_at',
         'target_date',
     ];
@@ -47,11 +44,6 @@ class Attendance extends Model
     public function correctionRequests()
     {
         return $this->hasMany(AttendanceCorrectionRequest::class);
-    }
-
-    public function requests()
-    {
-        return $this->hasMany(AttendanceRequest::class);
     }
 
     public function scopeApproved($query)

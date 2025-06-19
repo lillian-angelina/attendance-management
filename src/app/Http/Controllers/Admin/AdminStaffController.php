@@ -61,6 +61,7 @@ class AdminStaffController extends Controller
             });
 
         return view('admin.attendance.staff', [
+            'date' => $date,
             'staff' => $staff,
             'attendances' => $attendances,
             'currentMonth' => $startOfMonth,

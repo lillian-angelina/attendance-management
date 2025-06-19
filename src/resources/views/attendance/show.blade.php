@@ -50,14 +50,14 @@
                     <div class="form-group">
                         <label class="form__work-start" for="work_start">出勤・退勤</label>
                         <input class="form__work-start__input" type="time" name="work_start" id="work_start"
-                            value="{{ old('work_end', \Carbon\Carbon::parse($attendance->work_start)->format('H:i')) }}">
+                            value="{{ old('work_start', optional($correctionRequest)->work_start ?? \Carbon\Carbon::parse($attendance->work_start)->format('H:i')) }}">
                         @error('work_start')
                             <div class="error-message">{{ $message }}</div>
                         @enderror
 
                         <label class="form__work-end" for="work_end">～</label>
                         <input class="form__work-end__input" type="time" name="work_end" id="work_end"
-                            value="{{ old('work_end', \Carbon\Carbon::parse($attendance->work_end)->format('H:i')) }}">
+                            value="{{ old('work_end', optional($correctionRequest)->work_start ?? \Carbon\Carbon::parse($attendance->work_end)->format('H:i')) }}">
                         @error('work_end')
                             <div class="error-message">{{ $message }}</div>
                         @enderror
@@ -102,7 +102,7 @@
                                 @error("break_start_times.$index")
                                     <div class="error-message">{{ $message }}</div>
                                 @enderror
-                                
+
                                 <label class="form__break-time_end" for="break_end_{{ $index }}">～</label>
                                 <input class="form__break-time__input-end" type="time" name="break_end_times[]"
                                     id="break_end_{{ $index }}"
@@ -117,7 +117,7 @@
                     <div class="form-group-reason">
                         <label class="form__reason" for="reason">備考</label>
                         <textarea class="form__reason__textarea" name="reason" id="reason"
-                            rows="4">{{ old('reason', $correctionReason ?? '') }}</textarea>
+                            rows="4">{{ old('reason', $correctionReason) }}</textarea>
                     </div>
                     @error('reason')
                         <div class="error-message">{{ $message }}</div>

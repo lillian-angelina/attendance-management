@@ -19,8 +19,9 @@ return new class extends Migration {
             $table->string('reason')->nullable();
             $table->dateTime('work_start')->nullable();
             $table->dateTime('work_end')->nullable();
+            $table->json('break_start_times')->nullable();
+            $table->json('break_end_times')->nullable();
             $table->string('target_date')->nullable();
-            $table->boolean('is_edited')->default(false);
             $table->timestamp('requested_at')->nullable();
             $table->timestamps();
         });
