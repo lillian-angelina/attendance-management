@@ -16,21 +16,16 @@ class StampCorrectionRequestController extends Controller
 {
     public function index(Request $request)
     {
-        // 管理者認証と一般ユーザー認証のどちらでログインしているかを確認
         $isAdmin = auth('admin')->check();
         $user = $isAdmin ? auth('admin')->user() : auth()->user();
-
-        // レイアウト切り替え
         $layout = $isAdmin ? 'layouts.admin' : 'layouts.app';
 
-        // ステータス絞り込み（例: pending / approved）
         $status = $request->input('status', 'pending');
 
-        // AttendanceCorrectionRequest から取得
         $query = AttendanceCorrectionRequest::with(['attendance.user'])
-            ->where('status', $status);
+            ->where('status', $status)
+            ->orderBy('requested_at', 'desc');
 
-        // 管理者でなければ、自分の申請のみに絞る
         if (!$isAdmin) {
             $query->whereHas('attendance', function ($q) use ($user) {
                 $q->where('user_id', $user->id);
@@ -55,6 +50,16 @@ class StampCorrectionRequestController extends Controller
             'date' => $request->input('date'),
             'work_start' => $request->input('work_start'),
             'work_end' => $request->input('work_end'),
+            'status' => 'pending',
+            'requested_at' => Carbon::now(),
+        ]);
+
+        $correctionRequest = AttendanceCorrectionRequest::create([
+            'user_id' => Auth::id(),
+            'attendance_id' => $correctionRequest->id,
+            'date' => $request->input('date'),
+            'work_start' => $request->input('work_start'),
+            'work_end' => $request->input('work_end'),
             'reason' => $request->input('reason'),
             'status' => 'pending',
             'requested_at' => Carbon::now(),
@@ -71,5 +76,24 @@ class StampCorrectionRequestController extends Controller
         }
 
         return redirect()->route('stamp_correction_request.index')->with('success', '修正申請を送信しました。');
+    }
+
+    public function update(Request $request, AttendanceCorrectionRequest $attendanceCorrectionRequest)
+    {
+        $attendanceCorrectionRequest->work_start = $request->input('work_start');
+        $attendanceCorrectionRequest->work_end = $request->input('work_end');
+        $attendanceCorrectionRequest->status = 'pending';
+        $attendanceCorrectionRequest->requested_at = now();
+        $attendanceCorrectionRequest->reason = $request->input('reason');
+
+        $attendanceCorrectionRequest->update([
+            'status' => $request->input('status'),
+            'reason' => $request->input('reason'),
+            'admin_id' => Auth::id(),
+        ]);
+
+        $attendanceCorrectionRequest->save();
+
+        return redirect()->route('stamp_correction_request.index')->with('success', '修正申請を更新しました。');
     }
 }

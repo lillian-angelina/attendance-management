@@ -18,7 +18,7 @@ return new class extends Migration {
             $table->date('work_date');         // 勤務日
             $table->integer('break_time')->nullable();        // 勤務時間
             $table->integer('total_time')->nullable();        // 勤務時間（分など数値で保存推奨）
-            $table->string('status')->default('pending'); // 修正ステータス
+            $table->string('status')->nullable();
             $table->timestamp('requested_at')->nullable();  // 修正申請日時
             $table->string('target_date')->nullable(); // 任意（用途次第）
             $table->boolean('is_edited')->default(false);   // 編集フラグ

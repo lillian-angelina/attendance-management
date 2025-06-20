@@ -123,12 +123,12 @@
                         <div class="error-message">{{ $message }}</div>
                     @enderror
             </div>
-            @if (!$attendance->is_edited)
+            @if ($attendance->status === 'pending')
+                <p class="btn-text">※承認待ちのため修正はできません</p>
+            @else
                 <div class="button-group">
                     <button type="submit" class="btn btn-primary">修正</button>
                 </div>
-            @else
-                <p class="btn-text">※承認待ちのため修正はできません</p>
             @endif
             </form>
         </div>
