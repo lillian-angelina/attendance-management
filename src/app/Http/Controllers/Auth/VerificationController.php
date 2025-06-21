@@ -15,7 +15,7 @@ class VerificationController extends Controller
     public function resend(Request $request)
     {
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect('/attendance'); // 認証済の場合
+            return redirect('/attendance');
         }
 
         $request->user()->sendEmailVerificationNotification();

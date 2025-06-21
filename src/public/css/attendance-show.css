@@ -168,7 +168,7 @@ body {
 }
 
 .error-message {
-    display: flex;
+    text-align: center;
     color: red;
     margin-top: 4px;
 }

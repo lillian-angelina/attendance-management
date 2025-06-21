@@ -1,5 +1,5 @@
-.toppage-header-search,
-.toppage-header-nav {
+.header-nav,
+.header-nav--ul {
     display: none;
 }
 

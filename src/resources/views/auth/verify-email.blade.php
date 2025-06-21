@@ -1,11 +1,11 @@
 @extends('layouts/app')
 
-@section('css')
-    <link rel="stylesheet" href="{{ asset('css/verify-email.css') }}">
-@endsection
-
 @section('title')
     <title>メール認証</title>
+@endsection
+
+@section('css')
+    <link rel="stylesheet" href="{{ asset('css/verify-email.css') }}">
 @endsection
 
 @section('content')
@@ -22,12 +22,12 @@
             @endif
             <div class="content">
                 <div class="certification">
-                    <p><a href="{{ route('mypage.profile') }}">認証はこちらから</a></p>
+                    <p><a href="{{ route('login') }}">認証はこちらから</a></p>
                 </div>
             </div>
             <form method="POST" action="{{ route('verification.send') }}">
                 @csrf
-                <button type="submit" class="btn btn-primary">確認メールを再送する</button>
+                <button type="submit" class="btn btn-primary">認証メールを再送する</button>
             </form>
         </div>
     </div>

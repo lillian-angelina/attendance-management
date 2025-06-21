@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\VerificationController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Attendance\AttendanceController;
 use App\Http\Controllers\StampCorrectionRequestController;
@@ -19,9 +20,23 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [RegisterController::class, 'register'])->name('register.post');
 
-// メール認証
-Route::get('/email/verify', [VerificationController::class, 'notice'])->name('verification.notice');
-Route::post('/email/verification-notification', [VerificationController::class, 'resend'])->name('verification.send');
+// 認証ルート + メール認証
+Auth::routes(['verify' => true]);
+
+// メール認証ルート
+Route::middleware('auth')->group(function () {
+    Route::get('/email/verify', [VerificationController::class, 'notice'])->name('verification.notice');
+
+    Route::post('/email/verification-notification', [VerificationController::class, 'resend'])
+        ->middleware('throttle:6,1')
+        ->name('verification.send');
+});
+
+Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+    $request->fulfill();
+    return redirect()->route('attendance.create')->with('message', 'メールアドレスの認証が完了しました。ログインしてください。');
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'create'])->name('attendance.create');
 

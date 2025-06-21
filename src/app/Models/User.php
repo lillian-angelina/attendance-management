@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Attendance;
+use App\Notifications\VerifyEmailJa;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -63,5 +64,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isAdmin(): bool
     {
         return false;
+    }
+
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new VerifyEmailJa);
     }
 }
