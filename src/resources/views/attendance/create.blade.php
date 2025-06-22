@@ -1,3 +1,4 @@
+{{-- resources/views/attendance/create.blade.php --}}
 @extends('layouts.app')
 
 @section('title')
@@ -10,7 +11,6 @@
 
 @section('content')
     <div class="attendance__content">
-        {{-- 状態表示 --}}
         <p class="attendance__status">
             @switch($status)
                 @case('working')
@@ -27,21 +27,17 @@
             @endswitch
         </p>
 
-        {{-- 日付と時間の表示 --}}
         <div class="attendance__datetime">
             <p class="attendance__datetime-ymd">{{ $today }}（{{ $weekday }}）</p>
             <p id="liveTime" class="attendance__datetime-hi">{{ \Carbon\Carbon::now()->format('H:i') }}</p>
         </div>
 
-        {{-- ボタン表示 --}}
         @if($status === 'none')
-            {{-- 未出勤 --}}
             <form class="form-clockin" method="POST" action="{{ route('attendance.startWork') }}">
                 @csrf
                 <button type="submit" class="attendance__submit-button">出勤</button>
             </form>
         @elseif($status === 'working')
-            {{-- 出勤中 --}}
             <div class="form-submit">
                 <form class="form-clockout" method="POST" action="{{ route('attendance.endWork') }}">
                     @csrf
@@ -53,13 +49,11 @@
                 </form>
             </div>
         @elseif($status === 'resting')
-            {{-- 休憩中 --}}
             <form class="form-restend" method="POST" action="{{ route('attendance.restEnd') }}">
                 @csrf
                 <button type="submit" class="attendance__submit-button">休憩戻</button>
             </form>
         @elseif($status === 'finished')
-            {{-- 退勤済み --}}
             <p class="attendance__message">お疲れ様でした。</p>
         @endif
     </div>
@@ -74,6 +68,6 @@
         document.getElementById('liveTime').textContent = `${hours}:${minutes}`;
     }
     updateTime();
-    setInterval(updateTime, 60000); // 1分ごとに更新
+    setInterval(updateTime, 60000);
 </script>
 @endsection

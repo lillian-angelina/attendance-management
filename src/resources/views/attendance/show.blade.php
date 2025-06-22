@@ -28,7 +28,6 @@
                     </p>
                 </div>
 
-                {{-- 現在のデータの表示 --}}
                 <div class="attendance-detail__display">
                     <p class="attendance-detail__ymd">
                         日付
@@ -41,7 +40,6 @@
                     </p>
                 </div>
 
-                {{-- 修正フォーム --}}
                 <form action="{{ route('attendance.update', ['attendance' => $attendance->id]) }}" method="POST"
                     class="attendance-detail__form">
                     @csrf

@@ -13,23 +13,18 @@ use Illuminate\Http\Request;
 class AdminStampCorrectionRequestController extends Controller
 {
     use AuthorizesRequests;
-    // 一覧表示
+    
     public function index(Request $request)
     {
-        // 管理者認証と一般ユーザー認証のどちらでログインしているかを確認
         $isAdmin = auth('admin')->check();
         $user = $isAdmin ? auth('admin')->user() : auth()->user();
 
-        // レイアウト切り替え
         $layout = $isAdmin ? 'layouts.admin' : 'layouts.app';
 
-        // ステータス絞り込み（例: pending / approved）
         $status = $request->input('status', 'pending');
 
-        // クエリビルダー
         $query = Attendance::with('user')->where('status', $status);
 
-        // 管理者でなければ、自分のデータのみに絞る
         if (!$isAdmin) {
             $query->where('user_id', $user->id);
         }
@@ -44,10 +39,8 @@ class AdminStampCorrectionRequestController extends Controller
         ]);
     }
 
-    // 承認画面表示
     public function showApprove(AttendanceCorrectionRequest $attendanceCorrectionRequest)
     {
-        // 必要なリレーションを取得
         $attendanceCorrectionRequest = AttendanceCorrectionRequest::with(['attendance.breaks', 'user', 'attendance.user'])
             ->findOrFail($attendanceCorrectionRequest->id);
 
@@ -77,8 +70,7 @@ class AdminStampCorrectionRequestController extends Controller
     // 承認処理
     public function approve(AdminAttendanceCorrectionApproveRequest $request, AttendanceCorrectionRequest $attendanceCorrectionRequest)
     {
-        // 管理者認証
-        $user = auth('admin')->user(); // nullチェック含める
+        $user = auth('admin')->user();
 
         if (!$user || !method_exists($user, 'isAdmin') || !$user->isAdmin()) {
             abort(403, '承認権限がありません。');
@@ -86,7 +78,6 @@ class AdminStampCorrectionRequestController extends Controller
 
         $attendance = $attendanceCorrectionRequest->attendance;
 
-        // 勤怠修正申請データを更新
         $attendanceCorrectionRequest->update([
             'status' => 'approved',
             'is_edited' => true,
@@ -95,7 +86,6 @@ class AdminStampCorrectionRequestController extends Controller
             'reason' => $request->input('reason'),
         ]);
 
-        // 関連勤怠データを更新
         if ($attendance) {
             $today = now()->toDateString();
             $attendance->update([

@@ -9,7 +9,7 @@ class VerificationController extends Controller
 {
     public function notice()
     {
-        return view('auth.verify-email'); // resources/views/auth/verify-email.blade.php
+        return view('auth.verify-email');
     }
 
     public function resend(Request $request)

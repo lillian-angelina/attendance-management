@@ -11,14 +11,14 @@ class LoginController extends Controller
 {
     public function showLoginForm()
     {
-        return view('auth.login'); // resources/views/auth/login.blade.php
+        return view('auth.login');
     }
 
     public function login(LoginRequest $request)
     {
         if (Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
             $request->session()->regenerate();
-            return redirect()->intended('/attendance'); // 出勤画面などに遷移
+            return redirect()->intended('/attendance');
         }
 
         return back()->withErrors([

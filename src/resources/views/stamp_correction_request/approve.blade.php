@@ -23,7 +23,6 @@
                         </span>
                 </div>
 
-                {{-- 現在のデータの表示 --}}
                 <div class="attendance-detail__display">
                     <p class="attendance-detail__ymd">
                         日付

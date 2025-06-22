@@ -14,7 +14,6 @@ class RouteServiceProvider extends ServiceProvider
     {
         parent::boot();
 
-        // モデルバインディングの追加（オプション）
         Route::model('attendanceCorrectionRequest', AttendanceCorrectionRequest::class);
     }
 }

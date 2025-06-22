@@ -48,14 +48,13 @@ class AdminAttendanceCorrectionApproveRequest extends FormRequest
                 $workStart = Carbon::createFromFormat('H:i', $this->input('work_start'));
                 $workEnd = Carbon::createFromFormat('H:i', $this->input('work_end'));
             } catch (\Exception $e) {
-                // 時刻形式が不正な場合も休憩チェックをスキップ
                 return;
             }
 
             if ($workStart >= $workEnd) {
                 $validator->errors()->add('work_start', '出勤時間もしくは退勤時間が不適切な値です');
                 $validator->errors()->add('work_end', '出勤時間もしくは退勤時間が不適切な値です');
-                return; // 🚨 ここで休憩バリデーションを中断
+                return;
             }
 
             $startTimes = $this->input('break_start_times', []);
@@ -77,7 +76,6 @@ class AdminAttendanceCorrectionApproveRequest extends FormRequest
                             $validator->errors()->add("break_start_times.$index", '出勤時間もしくは退勤時間が不適切な値です');
                         }
                     } catch (\Exception $e) {
-                        // 時刻形式不正はrulesでカバー済み
                     }
                 }
             }
@@ -90,7 +88,7 @@ class AdminAttendanceCorrectionApproveRequest extends FormRequest
                             $validator->errors()->add("break_end_times.$index", '出勤時間もしくは退勤時間が不適切な値です');
                         }
                     } catch (\Exception $e) {
-                        // 時刻形式不正はrulesでカバー済み
+                        //
                     }
                 }
             }

@@ -1,3 +1,5 @@
+{{-- resources/views/admin/attendance/staff.blade.php --}}
+
 @extends('layouts.admin')
 
 @section('title')
@@ -12,7 +14,6 @@
     <div class="attendance-staff">
         <h1 class="attendance-staff__title"><span class="attendance__staff-line">|</span>{{ $staff->name }} さんの勤怠一覧</h1>
 
-        {{-- 月切り替えナビゲーション --}}
         <div class="attendance-staff__nav">
             <a href="{{ route('admin.attendance.staff', ['staff' => $staff->id, 'month' => $prevMonth->format('Y-m')]) }}"
                 class="attendance-staff__nav-link"><img src="{{ asset('images/←.png') }}" alt="#" class="icon">前月</a>
@@ -26,7 +27,6 @@
                 class="attendance-staff__nav-link">翌月<img src="{{ asset('images/→.png') }}" alt="#" class="icon"></a>
         </div>
 
-        {{-- 勤怠テーブル --}}
         <table class="attendance-staff__table">
             <thead>
                 <tr class="attendance__table-header">

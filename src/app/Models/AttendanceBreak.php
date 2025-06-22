@@ -16,7 +16,6 @@ class AttendanceBreak extends Model
         'rest_end_time',
     ];
 
-    // 親の勤怠修正申請とのリレーション
     public function correctionRequest()
     {
         return $this->belongsTo(Attendance::class);

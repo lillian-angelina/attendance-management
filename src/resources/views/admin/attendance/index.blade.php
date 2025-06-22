@@ -1,3 +1,4 @@
+{{-- resources/views/admin/attendance/index.blade.php --}}
 @extends('layouts.admin')
 
 @section('title')

@@ -14,17 +14,14 @@ class RegisterController extends Controller
     {
         $validated = $request->validated();
 
-        // ユーザー作成
         $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
         ]);
 
-        // これを追加：登録イベントを発火（→ 認証メールが送信される）
         event(new Registered($user));
 
-        // ログイン処理（必要であれば）
         auth()->login($user);
 
         return redirect()->route('verification.notice');

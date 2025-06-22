@@ -8,7 +8,7 @@ class LoginRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return true; // 認可が不要なら true
+        return true;
     }
 
     public function rules(): array

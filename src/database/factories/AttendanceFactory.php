@@ -21,9 +21,9 @@ class AttendanceFactory extends Factory
         ];
         $date = now()->subDays(rand(1, 30))->startOfDay();
 
-        $start = Carbon::parse('09:00')->addMinutes(rand(-30, 30)); // 8:30～9:30
-        $end = (clone $start)->addHours(8)->addMinutes(rand(-15, 15)); // 8時間 ±15分
-        $break = 60; // 昼休憩固定
+        $start = Carbon::parse('09:00')->addMinutes(rand(-30, 30));
+        $end = (clone $start)->addHours(8)->addMinutes(rand(-15, 15));
+        $break = 60;
         $total = $end->diffInMinutes($start) - $break;
 
         return [

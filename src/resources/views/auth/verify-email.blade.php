@@ -1,3 +1,4 @@
+{{-- resources/views/auth/verify-email.blade.php --}}
 @extends('layouts/app')
 
 @section('title')
@@ -22,7 +23,7 @@
             @endif
             <div class="content">
                 <div class="certification">
-                    <p><a href="{{ route('login') }}">認証はこちらから</a></p>
+                    <p><a href="https://mailtrap.io/" target="_blank" rel="noopener">認証はこちらから</a></p>
                 </div>
             </div>
             <form method="POST" action="{{ route('verification.send') }}">

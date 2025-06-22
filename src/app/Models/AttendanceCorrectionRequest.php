@@ -25,7 +25,6 @@ class AttendanceCorrectionRequest extends Model
         'requested_at',
     ];
 
-    // ユーザーとのリレーション
     public function user()
     {
         return $this->belongsTo(User::class);

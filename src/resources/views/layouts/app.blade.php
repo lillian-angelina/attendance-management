@@ -25,7 +25,7 @@
                 <ul class="header_nav--ul">
 
                     @if (isset($status) && $status === 'finished')
-                        {{-- 退勤後メニュー --}}
+
                         <li class="header_nav--attendance-list">
                             <a href="{{ url('/attendance/list') }}">今月の出勤一覧</a>
                         </li>
@@ -34,7 +34,7 @@
                             <a href="{{ url('/stamp_correction_request/list') }}">申請一覧</a>
                         </li>
                     @else
-                        {{-- 通常メニュー --}}
+
                         <li class="header_nav--attendance">
                             <a href="{{ url('/attendance') }}">勤怠</a>
                         </li>

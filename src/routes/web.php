@@ -37,6 +37,7 @@ Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $requ
     return redirect()->route('attendance.create')->with('message', 'メールアドレスの認証が完了しました。ログインしてください。');
 })->middleware(['auth', 'signed'])->name('verification.verify');
 
+// 認証済みユーザーのルート
 Route::middleware(['auth'])->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'create'])->name('attendance.create');
 
@@ -53,6 +54,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/attendance/rest-end', [AttendanceController::class, 'endRest'])->name('attendance.restEnd');
 });
 
+// 修正申請
 Route::get('/stamp_correction_request/list', [StampCorrectionRequestController::class, 'index'])->name('stamp_correction_request.index');
 Route::post('/stamp_correction_request/store', [StampCorrectionRequestController::class, 'store'])->name('stamp_correction_request.store');
 
@@ -64,15 +66,16 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
     Route::put('/stamp_correction_request/approve/{attendanceCorrectionRequest}', [AdminStampCorrectionRequestController::class, 'update'])->name('stamp_correction_request.update');
 });
 
+// 出勤情報の詳細表示
 Route::get('/attendance/{attendance}', [AttendanceController::class, 'show'])->name('attendance.show');
 
+// 管理者認証
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AdminAuthController::class, 'login'])->name('auth.login');
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('auth.logout');
 
-    // 認証済み管理者のみアクセス可能
-
+    // 管理者認証後のルート
     Route::middleware('auth:admin')->group(function () {
         Route::get('/attendance/list', [AdminAuthController::class, 'index'])->name('attendance.list');
         Route::get('/staff/list', [AdminStaffController::class, 'index'])->name('staff.list');
@@ -80,4 +83,5 @@ Route::prefix('admin')->name('admin.')->group(function () {
     });
 });
 
+// 出勤情報の修正申請
 Route::post('/attendance/{id}/request', [StampCorrectionRequestController::class, 'store'])->name('attendance.request');

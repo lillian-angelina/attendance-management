@@ -1,7 +1,5 @@
 <?php
 
-// StampCorrectionRequestController.php
-
 namespace App\Http\Controllers;
 
 use App\Models\AttendanceBreak;
@@ -42,7 +40,6 @@ class StampCorrectionRequestController extends Controller
         ]);
     }
 
-    // ★ 申請保存処理を追加
     public function store(Request $request)
     {
         $correctionRequest = Attendance::create([

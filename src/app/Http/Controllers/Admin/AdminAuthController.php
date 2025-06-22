@@ -19,8 +19,8 @@ class AdminAuthController extends Controller
             ? Carbon::parse($request->input('date'))
             : Carbon::today();
 
-        $startOfDay = $date->copy()->startOfDay(); // 00:00:00
-        $endOfDay = $date->copy()->endOfDay();     // 23:59:59
+        $startOfDay = $date->copy()->startOfDay();
+        $endOfDay = $date->copy()->endOfDay();
 
         $attendances = Attendance::with(['user', 'attendanceBreaks'])
             ->whereDate('work_date', $date)

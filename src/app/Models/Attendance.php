@@ -25,7 +25,6 @@ class Attendance extends Model
         'target_date',
     ];
 
-    // ユーザーとのリレーション（User モデルがある前提）
     public function user()
     {
         return $this->belongsTo(User::class);

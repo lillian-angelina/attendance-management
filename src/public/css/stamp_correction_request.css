@@ -42,11 +42,11 @@ body {
 
 .button__nav1,
 .button__nav2 {
-    font-weight: 400; /* 非選択時の文字の太さ */
+    font-weight: 400;
 }
 
 .button__nav--active {
-    font-weight: 700; /* 選択時の文字の太さ */
+    font-weight: 700;
 }
 
 .calendar-icon {
@@ -84,7 +84,7 @@ body {
     border: none;
     border-radius: 10px;
     background: #FFFFFF;
-    margin-top: 20px;
+    margin: 20px 0;
 }
 
 .attendance__table-header {

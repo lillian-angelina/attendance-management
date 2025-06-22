@@ -3,7 +3,6 @@
 namespace App\Policies;
 
 use App\Models\User;
-use Illuminate\Contracts\Auth\Authenticatable;
 use App\Models\AttendanceCorrectionRequest;
 
 class AttendanceCorrectionRequestPolicy

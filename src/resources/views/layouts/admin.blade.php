@@ -20,7 +20,7 @@
             </a>
         </div>
 
-        @if (!Request::is('admin/login') && !Request::is('login') && !Request::is('verify-email'))
+        @if (!Request::is('admin/login'))
             <nav class="header_nav">
                 <ul class="header_nav--ul">
 

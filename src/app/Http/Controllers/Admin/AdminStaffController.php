@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
-use App\Models\Admin;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Attendance;
 use App\Models\User;
 use Carbon\Carbon;
@@ -19,7 +17,7 @@ class AdminStaffController extends Controller
 
     public function index()
     {
-        $users = User::all(); // 一般ユーザーをすべて取得
+        $users = User::all();
         return view('admin.staff.index', compact('users'));
     }
 

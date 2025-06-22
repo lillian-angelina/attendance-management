@@ -36,7 +36,7 @@ class AuthServiceProvider extends ServiceProvider
 
         Gate::before(function ($user, $ability) {
             if ($user instanceof Admin) {
-                return true; // すべての操作を許可
+                return true;
             }
         });
     }

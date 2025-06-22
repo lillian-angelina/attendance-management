@@ -28,21 +28,17 @@ class AttendanceController extends Controller
     {
         $user = Auth::user();
 
-        // クエリパラメータから「月」を取得（例: '2025-04'）
         $monthParam = $request->query('month');
 
-        // Carbon化（'Y-m' 形式から、月初日にする）
         $currentMonth = $monthParam
             ? Carbon::createFromFormat('Y-m', $monthParam)->startOfMonth()
             : Carbon::now()->startOfMonth();
 
-        // 前月・翌月のCarbonオブジェクトを作成
         $prevMonth = $currentMonth->copy()->subMonth();
         $nextMonth = $currentMonth->copy()->addMonth();
-        $startDate = $currentMonth->copy()->startOfMonth()->startOfDay(); // 2025-06-01 00:00:00
-        $endDate = $currentMonth->copy()->endOfMonth()->endOfDay();       // 2025-06-30 23:59:59
+        $startDate = $currentMonth->copy()->startOfMonth()->startOfDay();
+        $endDate = $currentMonth->copy()->endOfMonth()->endOfDay();
 
-        // 出勤データ取得（該当月）
         $attendances = Attendance::with(['user', 'attendanceBreaks', 'breaks'])
             ->where('user_id', $user->id)
             ->whereBetween('work_date', [$startDate->toDateString(), $endDate->toDateString()])
@@ -81,19 +77,15 @@ class AttendanceController extends Controller
         $workingMinutes = $attendanceService->calculateWorkingTime($attendance);
         $layout = auth('admin')->check() ? 'layouts.admin' : 'layouts.app';
 
-        // クエリパラメータの reason を取得（存在すればそれを優先）
         $queryReason = $request->query('reason');
 
-        // 修正申請（承認待ち）を取得
         $correctionRequest = AttendanceCorrectionRequest::where('attendance_id', $attendance->id)
             ->where('status', 'pending')
             ->latest()
             ->first();
 
-        // 備考：クエリの reason > 修正申請 > 勤怠備考 > 空文字 の順で優先
         $correctionReason = $queryReason ?? optional($correctionRequest)->reason ?? $attendance->correction_reason ?? '';
 
-        // 表示日付
         $dateSource = $attendance->work_date ?? $attendance->work_start ?? now();
         $carbonDate = \Carbon\Carbon::parse($dateSource);
 

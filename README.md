@@ -66,7 +66,7 @@ DB_PASSWORD=laravel_pass
 
 ## 使用技術
 
-- MySQL 8.4.4
+- MySQL 9.2.0
 - PHP 8.2
 - Laravel 12.0
 
@@ -77,4 +77,4 @@ DB_PASSWORD=laravel_pass
 
 ## ER 図
 
-![image](er_diagram.png)
+![image](er_data.png)

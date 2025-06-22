@@ -1,3 +1,4 @@
+{{-- resources/views/attendance/index.blade.php --}}
 @extends('layouts.app')
 
 @section('title')
@@ -12,7 +13,6 @@
     <div class="attendance">
         <h1 class="attendance__title"><span class="attendance__title-line">|</span>勤怠一覧</h1>
 
-        {{-- 月切り替えナビゲーション --}}
         <div class="attendance__navigation">
             <a href="{{ route('attendance.list', ['month' => $prevMonth->format('Y-m')]) }}" class="attendance__nav--prev">
                 <img src="{{ asset('images/←.png') }}" alt="#" class="icon">前月
