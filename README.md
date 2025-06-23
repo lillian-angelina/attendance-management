@@ -12,19 +12,6 @@ https://mailtrap.io/
 .envファイルのMAIL_MAILERからMAIL_ENCRYPTIONまでの項目をコピー＆ペーストしてください。
 MAIL_FROM_ADDRESSは任意のメールアドレスを入力してください。
 
-## Stripeについて
-
-コンビニ支払いとカード支払いのオプションがありますが、決済画面にてコンビニ支払いを選択しますと、レシートを印刷する画面に遷移します。
-そのため、カード支払いを成功させた場合に意図する画面遷移が行える想定です。
-
-また、StripeのAPIキーは以下のように設定をお願いいたします。
-
-STRIPE_PUBLIC_KEY="パブリックキー"
-STRIPE_SECRET_KEY="シークレットキー"
-
-以下のリンクは公式ドキュメントです。
-https://docs.stripe.com/payments/checkout?locale=ja-JP
-
 ## Docker ビルド
 
 1. git clone git@github.com:lillian-angelina/attendance-management.git
