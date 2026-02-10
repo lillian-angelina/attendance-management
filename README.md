@@ -69,7 +69,7 @@
 
 ## 機能一覧
 <br>
-管理者ユーザー
+# 管理者ユーザー
 管理者ログイン画面
 <img width="2558" height="1273" alt="管理者ログイン画面" src="https://github.com/user-attachments/assets/97ebed48-b739-41f7-8f34-05f9c4835771" />
 勤怠一覧画面
@@ -85,7 +85,7 @@
 勤怠詳細承認済み画面
 <img width="2552" height="1266" alt="勤怠詳細承認済み画面" src="https://github.com/user-attachments/assets/9c258326-4826-4ad7-83a1-c4fed54ada93" />
 
-一般ユーザー
+# 一般ユーザー
 一般ログイン画面
 <img width="2552" height="1261" alt="一般ログイン画面" src="https://github.com/user-attachments/assets/60f33bfe-f5f2-46d7-94a9-9dd26abe4001" />
 会員登録画面
