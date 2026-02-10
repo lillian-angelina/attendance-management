@@ -118,9 +118,17 @@
                             <p class="btn-text">承認済み</p>
                         </div>
                     @else
-                        <div class="button-group">
-                            <button type="submit" class="btn">承認</button>
-                        </div>
+                        {{-- adminガードでログインしている場合のみボタンを表示 --}}
+                        @if(auth('admin')->check())
+                            <div class="button-group">
+                                <button type="submit" class="btn">承認</button>
+                            </div>
+                        @else
+                            {{-- 管理者以外（一般ユーザーなど）が見た場合 --}}
+                            <div class="button-group">
+                                <p class="btn-text">承認権限がありません</p>
+                            </div>
+                        @endif
                     @endif
                 </form>
             </div>

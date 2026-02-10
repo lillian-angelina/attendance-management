@@ -21,9 +21,14 @@
                 <img src="{{ asset('images/←.png') }}" alt="前日" class="icon">前日
             </a>
 
-            <div class="attendance__nav attendance__nav--current">
+            <div class="attendance__nav attendance__nav--current" style="position: relative; cursor: pointer;"
+                onclick="document.getElementById('datePicker').showPicker()">
                 <img src="{{ asset('images/calendar-icon.png') }}" alt="カレンダー" class="calendar-icon">
                 <span>{{ $date->format('Y年n月j日') }}</span>
+
+                <input type="date" id="datePicker" value="{{ $date->format('Y-m-d') }}"
+                    style="position: absolute; opacity: 0; width: 100%; height: 100%; top: 0; left: 0; cursor: pointer;"
+                    onchange="handleDateChange(this.value)">
             </div>
 
             <a href="{{ route('admin.attendance.list', ['date' => $date->copy()->addDay()->format('Y-m-d')]) }}"
@@ -64,4 +69,10 @@
             </tbody>
         </table>
     </div>
+    <script>
+        function handleDateChange(selectedDate) {
+            const baseUrl = "{{ route('admin.attendance.list') }}";
+            window.location.href = baseUrl + "?date=" + selectedDate;
+        }
+    </script>
 @endsection
