@@ -1,6 +1,58 @@
-# 勤怠管理アプリ
+# 勤怠管理システム (Attendance Management System)
 
-## ⚪︎ 機能一覧
+## 概要
+企業の勤怠管理をデジタル化し、従業員の打刻から管理者による承認・集計までを一気通貫で行うWebアプリケーションです。
+現場での使いやすさを重視し、直感的なUIと、不正打刻を防止するためのシンプルな操作フローを実装しました。
+
+背景と目的
+・課題: 紙やExcelでの管理による転記ミスや、集計作業の膨大な工数。
+・解決策: クラウド上でリアルタイムに打刻・集計を行うことで、バックオフィス業務の効率化を目指しました。
+
+主な機能
+1. 従業員向け機能
+・打刻機能: 出勤・退勤・休憩開始・休憩終了のワンクリック打刻。
+・勤務履歴閲覧: 自身の月ごとの勤務時間や残業時間の確認。
+
+2. 管理者向け機能
+・従業員管理: アカウントの作成、編集、削除。
+・勤怠集計: 全従業員の勤務データの閲覧および月次集計。
+
+使用技術
+バックエンド
+・PHP 8.x / Laravel 8.x
+・Eloquent ORM による効率的なデータベース操作。
+・認証機能（Laravel Fortify/Breeze等）を用いたセキュアなログイン。
+
+フロントエンド
+・Bladeテンプレートエンジン / CSS (Tailwind CSS)
+・レスポンシブデザインに対応。
+
+開発環境・インフラ
+・Docker / Docker Compose
+・php-fpm, nginx, mysql のコンテナ構成。
+・環境構築の容易化とメンバー間での環境差異の解消。
+
+システム構成
+.
+├── docker/              # Docker設定ファイル
+├── src/                 # Laravelプロジェクト本体
+│   ├── app/Models/      # ビジネスロジック
+│   ├── app/Http/Controllers/ # リクエスト制御
+│   └── resources/views/ # UIテンプレート
+└── docker-compose.yml   # コンテナオーケストレーション
+
+こだわったポイント
+1. DB設計:
+・休憩時間を別テーブル（またはリレーション）で管理することで、1日に複数回の休憩をとるケースにも対応できる拡張性を持たせました。
+2. UI/UX:
+・打刻状態（現在「出勤中」なのか「休憩中」なのか）を動的に判断し、次に押すべきボタンのみを活性化させることで、誤操作を防ぐ設計にしました。
+3. 環境構築の自動化:
+・docker-compose up だけで開発環境が立ち上がるよう、設定を最適化しました。
+
+## ER 図
+![image](er_data.png)
+
+## 機能一覧
 管理者ユーザー
 管理者ログイン画面
 <img width="2558" height="1273" alt="管理者ログイン画面" src="https://github.com/user-attachments/assets/97ebed48-b739-41f7-8f34-05f9c4835771" />
@@ -44,69 +96,3 @@
 <img width="2537" height="1255" alt="申請一覧承認済み画面" src="https://github.com/user-attachments/assets/f08414a6-a248-4834-bbf9-fbeba5454be2" />
 
 
-
-## 環境構築
-
-## メール認証
-
-mailtrapというツールを使用しています。
-以下のリンクから会員登録をしてください。　
-https://mailtrap.io/
-
-メールボックスのIntegrationsから 「SMTP」を選択し、
-.envファイルのMAIL_MAILERからMAIL_ENCRYPTIONまでの項目をコピー＆ペーストしてください。
-MAIL_FROM_ADDRESSは任意のメールアドレスを入力してください。
-
-## Docker ビルド
-
-1. git clone git@github.com:lillian-angelina/attendance-management.git
-2. cd ~/coachtech/laravel/attendance-management
-3. docker-compose up -d --build
-
-## Laravel のセットアップ
-
-1. docker-compose exec php bash
-2. composer install
-3. .env ファイルの一部を以下のように編集
-
-```
-DB_CONNECTION=mysql
-DB_HOST=mysql
-DB_DATABASE=laravel_db_new
-DB_USERNAME=laravel_user
-DB_PASSWORD=laravel_pass
-```
-
-4. php artisan key:generate
-5. php artisan migrate --seed
-
-## キャッシュクリア（エラー回避のため）
-
-1. php artisan config:clear
-2. php artisan cache:clear
-3. php artisan view:clear
-4. php artisan route:clear
-
-## user のログイン用初期データ
-### テストユーザー(一般)
-- メールアドレス: test@example.com
-- パスワード: password123
-
-### テストユーザー(管理者)
-- メールアドレス: admin@example.com
-- パスワード: password123
-
-## 使用技術
-
-- MySQL 9.2.0
-- PHP 8.2
-- Laravel 12.0
-
-## URL
-
-- 環境開発: http://localhost:8082/
-- phpMyAdmin: http://localhost:8081/
-
-## ER 図
-
-![image](er_data.png)
