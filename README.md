@@ -46,13 +46,13 @@
 
 システム構成
 <br>
-.
-├── docker/              # Docker設定ファイル
-├── src/                 # Laravelプロジェクト本体
-│   ├── app/Models/      # ビジネスロジック
-│   ├── app/Http/Controllers/ # リクエスト制御
-│   └── resources/views/ # UIテンプレート
-└── docker-compose.yml   # コンテナオーケストレーション
+.<br>
+├── docker/              # Docker設定ファイル<br>
+├── src/                 # Laravelプロジェクト本体<br>
+│   ├── app/Models/      # ビジネスロジック<br>
+│   ├── app/Http/Controllers/ # リクエスト制御<br>
+│   └── resources/views/ # UIテンプレート<br>
+└── docker-compose.yml   # コンテナオーケストレーション<br>
 <br>
 
 こだわったポイント
